@@ -35,9 +35,11 @@ void SYS_Init(void)
     /* Init I/O Multi-function                                                                                 */
     /*---------------------------------------------------------------------------------------------------------*/
     /* Set P4.3 to PWM3 function */
-    SYS->P4_MFP = SYS_MFP_P43_PWM3;
+    SYS->P4_MFP &= ~(SYS_MFP_P43_Msk);
+    SYS->P4_MFP |= SYS_MFP_P43_PWM3;
     /* Set P1.0 to AIN0 function */
-    SYS->P1_MFP = SYS_MFP_P10_AIN0;
+    SYS->P1_MFP &= ~(SYS_MFP_P10_Msk);
+    SYS->P1_MFP |= SYS_MFP_P10_AIN0;
 
     /* Disable digital input path of analog pin AIN0 to prevent leakage */
     P1->OFFD |= 1 << GPIO_OFFD_OFFD_Pos;
