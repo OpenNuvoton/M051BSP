@@ -151,17 +151,23 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
 
     /* Set P3 multi-function pins for UART0 RXD and TXD. Set P3.4 P3.5 for I2C  */
-    SYS->P3_MFP = SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0 | SYS_MFP_P34_SDA0 | SYS_MFP_P35_SCL0;
+    SYS->P3_MFP &= ~(SYS_MFP_P30_Msk | SYS_MFP_P31_Msk | SYS_MFP_P34_Msk | SYS_MFP_P35_Msk);
+    SYS->P3_MFP |= SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0 | SYS_MFP_P34_SDA0 | SYS_MFP_P35_SCL0;
 
     /* Set P1.4, P1.5, P1.6, P1.7 for SPI0 */
-    SYS->P1_MFP = SYS_MFP_P14_SPISS0 | SYS_MFP_P15_MOSI_0 | SYS_MFP_P16_MISO_0 | SYS_MFP_P17_SPICLK0;
+    SYS->P1_MFP &= ~(SYS_MFP_P14_Msk | SYS_MFP_P15_Msk | SYS_MFP_P16_Msk | SYS_MFP_P17_Msk);
+    SYS->P1_MFP |= SYS_MFP_P14_SPISS0 | SYS_MFP_P15_MOSI_0 | SYS_MFP_P16_MISO_0 | SYS_MFP_P17_SPICLK0;
 
     /* Set P0.4, P0.5, P0.6, P0.7 for SPI1. Set P0.0 for AD0 */
-    SYS->P0_MFP = SYS_MFP_P04_SPISS1 | SYS_MFP_P05_MOSI_1 | SYS_MFP_P06_MISO_1 |
+    SYS->P0_MFP &= ~(SYS_MFP_P04_Msk | SYS_MFP_P05_Msk | SYS_MFP_P06_Msk |
+                  SYS_MFP_P07_Msk | SYS_MFP_P00_Msk);
+    SYS->P0_MFP |= SYS_MFP_P04_SPISS1 | SYS_MFP_P05_MOSI_1 | SYS_MFP_P06_MISO_1 |
                   SYS_MFP_P07_SPICLK1 | SYS_MFP_P00_AD0;
 
     /* Set P4.0, P4.1 for PWM0, PWM1, PWM2, PWM3. Set P4.6, P4.7 for ICE */
-    SYS->P4_MFP = SYS_MFP_P40_PWM0 | SYS_MFP_P41_PWM1 | SYS_MFP_P42_PWM2 | SYS_MFP_P43_PWM3 |
+    SYS->P4_MFP &= ~(SYS_MFP_P40_Msk | SYS_MFP_P41_Msk | SYS_MFP_P42_Msk | SYS_MFP_P43_Msk |
+                  SYS_MFP_P46_Msk | SYS_MFP_P47_Msk);
+    SYS->P4_MFP |= SYS_MFP_P40_PWM0 | SYS_MFP_P41_PWM1 | SYS_MFP_P42_PWM2 | SYS_MFP_P43_PWM3 |
                   SYS_MFP_P46_ICE_CLK | SYS_MFP_P47_ICE_DAT;
 
 }
