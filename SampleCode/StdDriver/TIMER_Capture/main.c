@@ -137,11 +137,17 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
     /*---------------------------------------------------------------------------------------------------------*/
-    /* Set P3 multi-function pins for UART0 RXD, TXD, T0, T1 and T1EX */
-    SYS->P3_MFP = SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0 | SYS_MFP_P34_T0 | SYS_MFP_P35_T1 | SYS_MFP_P33_T1EX;
+    /* Set P3 multi-function pins for UART0 RXD, TXD */
+    SYS->P3_MFP &= ~(SYS_MFP_P30_Msk | SYS_MFP_P31_Msk);
+    SYS->P3_MFP |=  (SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0);
+
+    /* Set P3 multi-function pins for T0, T1 and T1EX */
+    SYS->P3_MFP &= ~(SYS_MFP_P34_Msk | SYS_MFP_P35_Msk | SYS_MFP_P33_Msk);
+    SYS->P3_MFP |=  (SYS_MFP_P34_T0 | SYS_MFP_P35_T1 | SYS_MFP_P33_T1EX);
 
     /* Set P1 multi-function pins for T3 */
-    SYS->P1_MFP = SYS_MFP_P11_T3;
+    SYS->P1_MFP &= ~SYS_MFP_P11_Msk;
+    SYS->P1_MFP |= SYS_MFP_P11_T3;
 }
 
 void UART0_Init(void)

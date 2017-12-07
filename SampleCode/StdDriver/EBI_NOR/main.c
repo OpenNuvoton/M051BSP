@@ -99,22 +99,33 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
     /*---------------------------------------------------------------------------------------------------------*/
-    /* Set P3 multi-function pins for UART0 RXD, TXD and EBI MCLK, nWR and nRD */
-    SYS->P3_MFP = SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0 | SYS_MFP_P33_MCLK | SYS_MFP_P36_nWR | SYS_MFP_P37_nRD;
+    /* Set P3 multi-function pins for UART0 RXD and TXD */
+    SYS->P3_MFP &= ~(SYS_MFP_P30_Msk | SYS_MFP_P31_Msk);
+    SYS->P3_MFP |=  (SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0);
+
+    /* Set P3 multi-function pins for EBI MCLK, nWR and nRD */
+    SYS->P3_MFP &= ~(SYS_MFP_P33_Msk | SYS_MFP_P36_Msk | SYS_MFP_P37_Msk);
+    SYS->P3_MFP |=  (SYS_MFP_P33_MCLK | SYS_MFP_P36_nWR | SYS_MFP_P37_nRD);
 
     /* Set P0 multi-function pins for EBI AD0 ~ AD7 */
-    SYS->P0_MFP = SYS_MFP_P00_AD0 | SYS_MFP_P01_AD1 | SYS_MFP_P02_AD2 | SYS_MFP_P03_AD3 |
-                  SYS_MFP_P04_AD4 | SYS_MFP_P05_AD5 | SYS_MFP_P06_AD6 | SYS_MFP_P07_AD7;
+    SYS->P0_MFP &= ~(SYS_MFP_P00_Msk | SYS_MFP_P01_Msk | SYS_MFP_P02_Msk | SYS_MFP_P03_Msk |
+                     SYS_MFP_P04_Msk | SYS_MFP_P05_Msk | SYS_MFP_P06_Msk | SYS_MFP_P07_Msk);
+    SYS->P0_MFP |= (SYS_MFP_P00_AD0 | SYS_MFP_P01_AD1 | SYS_MFP_P02_AD2 | SYS_MFP_P03_AD3 |
+                    SYS_MFP_P04_AD4 | SYS_MFP_P05_AD5 | SYS_MFP_P06_AD6 | SYS_MFP_P07_AD7);
 
     /* Set P2 multi-function pins for EBI AD8 ~ AD15 */
-    SYS->P2_MFP = SYS_MFP_P20_AD8 | SYS_MFP_P21_AD9 | SYS_MFP_P22_AD10 | SYS_MFP_P23_AD11 |
-                  SYS_MFP_P24_AD12 | SYS_MFP_P25_AD13 | SYS_MFP_P26_AD14 | SYS_MFP_P27_AD15;
+    SYS->P2_MFP &= ~(SYS_MFP_P20_Msk | SYS_MFP_P21_Msk | SYS_MFP_P22_Msk | SYS_MFP_P23_Msk |
+                     SYS_MFP_P24_Msk | SYS_MFP_P25_Msk | SYS_MFP_P26_Msk | SYS_MFP_P27_Msk);
+    SYS->P2_MFP |= (SYS_MFP_P20_AD8 | SYS_MFP_P21_AD9 | SYS_MFP_P22_AD10 | SYS_MFP_P23_AD11 |
+                    SYS_MFP_P24_AD12 | SYS_MFP_P25_AD13 | SYS_MFP_P26_AD14 | SYS_MFP_P27_AD15);
 
     /* Set P1 multi-function pins for EBI nWRL and nWRH */
-    SYS->P1_MFP = SYS_MFP_P10_nWRL | SYS_MFP_P11_nWRH;
+    SYS->P1_MFP &= ~(SYS_MFP_P10_Msk | SYS_MFP_P11_Msk);
+    SYS->P1_MFP |=  (SYS_MFP_P10_nWRL | SYS_MFP_P11_nWRH);
 
-    /* Set P4 multi-function pins for EBI nCS, ALE and ICE CLK and DAT */
-    SYS->P4_MFP = SYS_MFP_P44_nCS | SYS_MFP_P45_ALE | SYS_MFP_P46_ICE_CLK | SYS_MFP_P47_ICE_DAT;
+    /* Set P4 multi-function pins for EBI nCS, ALE */
+    SYS->P4_MFP &= ~(SYS_MFP_P44_Msk | SYS_MFP_P45_Msk);
+    SYS->P4_MFP |=  (SYS_MFP_P44_nCS | SYS_MFP_P45_ALE);
 }
 
 void UART0_Init(void)
