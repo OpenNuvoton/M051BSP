@@ -236,9 +236,11 @@ void SYS_Init(void)
     /* Init I/O Multi-function                                                                                 */
     /*---------------------------------------------------------------------------------------------------------*/
     /* Set P3 multi-function pins for UART0 RXD and TXD  */
-    SYS->P3_MFP = SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0;
+    SYS->P3_MFP &= ~(SYS_MFP_P30_Msk | SYS_MFP_P31_Msk);
+    SYS->P3_MFP |= SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0;
     /* Set P2 multi-function pins for PWMB Channel0~3  */
-    SYS->P2_MFP = SYS_MFP_P25_PWM5 | SYS_MFP_P26_PWM6;
+    SYS->P2_MFP &= ~(SYS_MFP_P25_Msk | SYS_MFP_P26_Msk);
+    SYS->P2_MFP |= SYS_MFP_P25_PWM5 | SYS_MFP_P26_PWM6;
 }
 
 
