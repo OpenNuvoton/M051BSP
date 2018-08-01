@@ -16,6 +16,8 @@
 #define PLLCON_SETTING      CLK_PLLCON_50MHz_HXT
 #define PLL_CLOCK           50000000
 
+typedef void (FUNC_PTR)(void);
+
 void SYS_Init(void)
 {
     /*---------------------------------------------------------------------------------------------------------*/
@@ -68,6 +70,9 @@ void UART_Init()
 
 int main()
 {
+    FUNC_PTR    *ResetFunc;
+
+    
     /* Unlock protected register */
     SYS_UnlockReg();
 
@@ -92,8 +97,18 @@ int main()
     /* Change VECMAP for booting to APROM */
     FMC_SetVectorPageAddr(FMC_APROM_BASE);
 
-    /* Lock protected Register */
-    SYS_LockReg();
+    /* Reset All IP before boot to new AP */
+    SYS->IPRSTC2 = 0xFFFFFFFF;
+    SYS->IPRSTC2 = 0;
+    
+    /* Obtain Reset Handler address of new boot. */
+    ResetFunc = (FUNC_PTR *)M32(4);  
+
+    /* Set Main Stack Pointer register of new boot */ 
+    __set_MSP(M32(0));
+    
+    /* Call reset handler of new boot */
+    ResetFunc();       
 
     /* Software reset to boot to APROM */
     NVIC_SystemReset();
