@@ -183,7 +183,6 @@ int main()
 
     /* Read User Configuration */
     printf("  User Config 0 ......................... [0x%08x]\n", FMC_Read(FMC_CONFIG_BASE));
-//    printf("  User Config 1 ......................... [0x%08x]\n", FMC_Read(FMC_CONFIG_BASE + 4));
 
     do
     {

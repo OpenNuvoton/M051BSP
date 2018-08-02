@@ -110,9 +110,6 @@ int main()
     /* Call reset handler of new boot */
     ResetFunc();       
 
-    /* Software reset to boot to APROM */
-    NVIC_SystemReset();
-
     while(1);
 }
 
