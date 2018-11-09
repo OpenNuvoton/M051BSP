@@ -128,26 +128,29 @@ int main(void)
 
     /* Init UART0 for printf */
     UART0_Init();
-
+#if !( __GNUC__ )
     printf("\n\nCPU @ %d Hz\n", SystemCoreClock);
-
+#endif
     if(WWDT_GET_RESET_FLAG() == 1)
     {
         WWDT_CLEAR_RESET_FLAG();
         printf("\n*** WWDT time-out reset occurred ***\n");
     }
-
+#if !( __GNUC__ )
     printf("\n\nCPU @ %d Hz\n", SystemCoreClock);
+#endif
     printf("+-------------------------------------------------+\n");
     printf("|    WWDT Compare March Interrupt Sample Code    |\n");
     printf("+-------------------------------------------------+\n\n");
-
-    dPeriodTime = (((double)(1000000 * 2048) / (double)SystemCoreClock) * 1024) * 32;
-
     printf("# WWDT Settings: \n");
+#if !( __GNUC__ )
+    dPeriodTime = (((double)(1000000 * 2048) / (double)SystemCoreClock) * 1024) * 32;
     printf("  Clock source is HCLK/2048(%d Hz); Enable interrupt; Window Compare value is 32;\n", SystemCoreClock / 2048);
+#endif
     printf("  Select max WWDT time-out period is 1024 * (64 * WWDT_clock);\n");
+#if !( __GNUC__ )
     printf("# When WWDT start counting, system will generate first WWDT compare match interrupt after %.2f us.\n", dPeriodTime);
+#endif
     printf("  1.) reload WWDT counter value to 0x3F when WWDT interrupt count less than 10 to avoid WWDT reset occurred.\n");
     printf("  2.) system will be reset by WWDT counting time-out while WWDT interrupt count reaches to 10.\n\n");
 

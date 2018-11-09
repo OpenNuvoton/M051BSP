@@ -29,6 +29,7 @@
 #define TENOR_B 988
 
 void PWM_PwmIRQHandler(void);
+extern char GetChar(void);
 /*---------------------------------------------------------------------------------------------------------*/
 /* Global variables                                                                                        */
 /*---------------------------------------------------------------------------------------------------------*/
@@ -209,7 +210,7 @@ int32_t main(void)
     while(1)
     {
         u8ItemOK = 1;
-        u8Item = getchar();
+        u8Item = GetChar();
         printf("\t");
 
         switch(u8Item)

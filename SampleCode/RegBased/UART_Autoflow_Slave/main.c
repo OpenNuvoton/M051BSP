@@ -17,7 +17,11 @@
 #define PLL_CLOCK       50000000
 
 
+# if defined ( __GNUC__ )
+#define RXBUFSIZE 128
+#else
 #define RXBUFSIZE 1024
+#endif
 
 /*---------------------------------------------------------------------------------------------------------*/
 /* Global variables                                                                                        */
@@ -126,7 +130,7 @@ void UART1_Init()
 /* MAIN function                                                                                           */
 /*---------------------------------------------------------------------------------------------------------*/
 
-int main(void)
+int32_t main(void)
 {
 
     /* Unlock protected registers */
@@ -147,9 +151,9 @@ int main(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* SAMPLE CODE                                                                                             */
     /*---------------------------------------------------------------------------------------------------------*/
-
+#if !( __GNUC__ )
     printf("\n\nCPU @ %dHz\n", SystemCoreClock);
-
+#endif
     printf("\n\nUART Sample Program\n");
 
     /* UART auto flow sample slave function */

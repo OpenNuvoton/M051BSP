@@ -186,8 +186,9 @@ int main(void)
 
     /* Init UART0 for printf */
     UART0_Init();
-
+#if !( __GNUC__ )
     printf("\n\nCPU @ %d Hz\n", SystemCoreClock);
+#endif
     printf("+---------------------------------------------------+\n");
     printf("|    Timer External Capture Function Sample Code    |\n");
     printf("+---------------------------------------------------+\n\n");

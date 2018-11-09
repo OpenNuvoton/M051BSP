@@ -17,7 +17,7 @@
 typedef void (FUNC_PTR)(void);
 
 extern uint32_t  loaderImage1Base, loaderImage1Limit;
-
+extern char GetChar(void);
 
 void SYS_Init(void)
 {
@@ -194,7 +194,7 @@ int main()
         printf("| [1] Run IAP program (in LDROM)         |\n");
         printf("+----------------------------------------+\n");
         printf("Please select...");
-        u8Item = getchar();
+        u8Item = GetChar();
         printf("%c\n", u8Item);
 
         switch(u8Item)

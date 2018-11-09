@@ -17,7 +17,7 @@
 /*---------------------------------------------------------------------------------------------------------*/
 /* Global Interface Variables Declarations                                                                 */
 /*---------------------------------------------------------------------------------------------------------*/
-extern int IsDebugFifoEmpty(void);
+//extern int IsDebugFifoEmpty(void);
 volatile uint8_t  g_u8IsWDTTimeoutINT = 0;
 volatile uint32_t g_au32TMRINTCount[4] = {0};
 
@@ -180,8 +180,9 @@ int main(void)
 
     /* Init UART0 for printf */
     UART0_Init();
-
+#if !( __GNUC__ )
     printf("\n\nCPU @ %d Hz\n", SystemCoreClock);
+#endif
     printf("+---------------------------------------------------+\n");
     printf("|    Timer External Capture Function Sample Code    |\n");
     printf("+---------------------------------------------------+\n\n");

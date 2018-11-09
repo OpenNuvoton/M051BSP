@@ -161,7 +161,7 @@ void UART1_Init()
 /* MAIN function                                                                                           */
 /*---------------------------------------------------------------------------------------------------------*/
 
-int main(void)
+int32_t main(void)
 {
     /* Unlock protected registers */
     SYS_UnlockReg();
@@ -175,7 +175,7 @@ int main(void)
     /* Init UART0 for printf */
     UART0_Init();
     
-    /* Init UART0 for testing */
+    /* Init UART1 for testing */
     UART1_Init();    
 
     /*---------------------------------------------------------------------------------------------------------*/

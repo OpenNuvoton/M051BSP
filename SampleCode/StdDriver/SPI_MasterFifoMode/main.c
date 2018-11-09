@@ -25,6 +25,7 @@ volatile uint32_t g_u32RxDataCount;
 /* Function prototype declaration */
 void SYS_Init(void);
 void SPI_Init(void);
+extern char GetChar(void);
 
 /* ------------- */
 /* Main function */
@@ -70,7 +71,7 @@ int main(void)
     }
 
     printf("Before starting the data transfer, make sure the slave device is ready. Press any key to start the transfer.\n");
-    getchar();
+    GetChar();
     printf("\n");
 
     /* Set TX FIFO threshold, enable TX FIFO threshold interrupt and RX FIFO time-out interrupt */

@@ -17,8 +17,6 @@
 #define TEST_PAGE_NUM 10  /* page numbers */
 #define BYTE_PER_PAGE 256 /* byte per page */
 
-uint8_t SrcArray[BYTE_PER_PAGE];
-uint8_t DestArray[BYTE_PER_PAGE];
 uint32_t g_u32SystickCount;
 
 /* Function prototype declaration */
@@ -34,6 +32,8 @@ int main(void)
     uint32_t u32ID;
     uint32_t u32Duration_W, u32Duration_R;
     char au8String[20];
+    uint8_t SrcArray[BYTE_PER_PAGE];
+    uint8_t DestArray[BYTE_PER_PAGE];
 
     /* Init System, IP clock and multi-function I/O.
        In the end of SYS_Init() will issue SYS_LockReg()

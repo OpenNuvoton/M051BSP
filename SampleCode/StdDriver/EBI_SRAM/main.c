@@ -119,8 +119,9 @@ int main(void)
 
     /* Init UART0 for printf */
     UART0_Init();
-
+#if !( __GNUC__ )
     printf("\n\nCPU @ %d Hz\n", SystemCoreClock);
+#endif
     printf("+----------------------------+\n");
     printf("|    EBI SRAM Sample Code    |\n");
     printf("+----------------------------+\n\n");

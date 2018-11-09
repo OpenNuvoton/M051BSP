@@ -13,7 +13,7 @@
     ALIGN   4
         
 g_u32LoaderImageBase
-    INCBIN .\obj\FMC_LD.bin
+    INCBIN .\FMC_LD.bin
 g_u32LoaderImageLimit
 
     

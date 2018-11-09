@@ -14,7 +14,11 @@
 #include <stdio.h>
 #include "M051Series.h"
 
+# if defined ( __GNUC__ )
+#define TEST_COUNT             16
+#else
 #define TEST_COUNT             64
+#endif
 
 uint32_t g_au32SourceData[TEST_COUNT];
 uint32_t g_au32DestinationData[TEST_COUNT];

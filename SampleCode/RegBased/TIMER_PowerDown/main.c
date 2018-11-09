@@ -158,7 +158,9 @@ int main(void)
     /* Init UART0 for printf */
     UART0_Init();
 
+#if !( __GNUC__ )
     printf("\n\nCPU @ %d Hz\n", SystemCoreClock);
+#endif
     printf("+-------------------------------------------------+\n");
     printf("|    Timer0 Power-down and Wake-up Sample Code    |\n");
     printf("+-------------------------------------------------+\n\n");

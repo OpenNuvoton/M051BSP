@@ -27,6 +27,7 @@ volatile uint8_t g_u8MstEndFlag = 0;
 typedef void (*I2C_FUNC)(uint32_t u32Status);
 
 static volatile I2C_FUNC s_I2C0HandlerFn = NULL;
+extern char GetChar(void);
 
 /*---------------------------------------------------------------------------------------------------------*/
 /*  I2C0 IRQ Handler                                                                                       */
@@ -313,7 +314,7 @@ int32_t main(void)
     printf("\n");
     printf("Check I2C Slave(I2C0) is running first!\n");
     printf("Press any key to continue.\n");
-    getchar();
+    GetChar();
 
     /* Access Slave with no address */
     printf("\n");

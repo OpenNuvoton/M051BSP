@@ -24,7 +24,7 @@
 void SYS_Init(void);
 void UART0_Init(void);
 void AdcBurstModeTest(void);
-
+extern char GetChar(void);
 
 /*---------------------------------------------------------------------------------------------------------*/
 /* Define global variables and constants                                                                   */
@@ -175,7 +175,7 @@ void AdcBurstModeTest()
         printf("  [1] Single end input (channel 2 only)\n");
         printf("  [2] Differential input (channel pair 1 only)\n");
         printf("  Other keys: exit burst mode test\n");
-        u8Option = getchar();
+        u8Option = GetChar();
         if(u8Option == '1')
         {
             printf("%d conversion results of channel 2:\n", BURST_COUNT);
@@ -264,7 +264,7 @@ void ADC_IRQHandler(void)
 /*---------------------------------------------------------------------------------------------------------*/
 /* MAIN function                                                                                           */
 /*---------------------------------------------------------------------------------------------------------*/
-main(void)
+int main(void)
 {
 
     /* Unlock protected registers */

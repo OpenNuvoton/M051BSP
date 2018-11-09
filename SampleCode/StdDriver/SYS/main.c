@@ -17,6 +17,32 @@
 #define SIGNATURE       0x125ab234
 #define FLAG_ADDR       0x20000FFC
 
+extern char GetChar(void);
+
+/*
+ * @returns     Send value from UART debug port
+ * @details     Send a target char to UART debug port .
+ */
+static void SendChar_ToUART(int ch)
+{
+    while (UART0->FSR & UART_FSR_TX_FULL_Msk);
+
+    UART0->DATA = ch;
+    if(ch == '\n')
+    {
+        while (UART0->FSR & UART_FSR_TX_FULL_Msk);
+        UART0->DATA = '\r';
+    }
+}
+
+static void PutString(char *str)
+{
+    while (*str != '\0')
+    {
+        SendChar_ToUART(*str++);
+    }
+}
+
 /*---------------------------------------------------------------------------------------------------------*/
 /*  Brown Out Detector IRQ Handler                                                                         */
 /*---------------------------------------------------------------------------------------------------------*/
@@ -25,7 +51,7 @@ void BOD_IRQHandler(void)
     /* Clear BOD Interrupt Flag */
     SYS_CLEAR_BOD_INT_FLAG();
 
-    printf("Brown Out is Detected\n");
+    PutString("Brown Out is Detected\n");
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
@@ -114,7 +140,7 @@ void SYS_PLL_Test(void)
     /* PLL clock configuration test                                                                             */
     /*---------------------------------------------------------------------------------------------------------*/
 
-    printf("\n-------------------------[ Test PLL ]-----------------------------\n");
+    PutString("\n-------------------------[ Test PLL ]-----------------------------\n");
 
     for(i = 0; i < sizeof(g_au32PllSetting) / sizeof(g_au32PllSetting[0]) ; i++)
     {
@@ -132,9 +158,9 @@ void SYS_PLL_Test(void)
 
         /* Switch HCLK clock source to PLL */
         CLK_SetHCLK(CLK_CLKSEL0_HCLK_S_PLL, CLK_CLKDIV_HCLK(1));
-
+#if !( __GNUC__ )
         printf("  Change system clock to %d Hz ...................... ", SystemCoreClock);
-
+#endif
         /* Output selected clock to CKO, CKO Clock = HCLK / 2^(1 + 1) */
         CLK_EnableCKO(CLK_CLKSEL2_FRQDIV_S_HCLK, 1, 0);
 
@@ -143,11 +169,11 @@ void SYS_PLL_Test(void)
 
         if(pi())
         {
-            printf("[FAIL]\n");
+            PutString("[FAIL]\n");
         }
         else
         {
-            printf("[OK]\n");
+            PutString("[OK]\n");
         }
 
         /* Disable CKO clock */
@@ -231,9 +257,9 @@ int32_t main(void)
 
     /* Init UART0 for printf */
     UART0_Init();
-
+#if !( __GNUC__ )
     printf("\n\nCPU @ %dHz\n", SystemCoreClock);
-
+#endif
     /*
         This sample code will show some function about system manager controller and clock controller:
         1. Read PDID
@@ -243,16 +269,16 @@ int32_t main(void)
         5. Output system clock from CKO pin, and the output frequency = system clock / 4
     */
 
-    printf("+---------------------------------------+\n");
-    printf("|    M05xx System Driver Sample Code    |\n");
-    printf("+---------------------------------------+\n");
+    PutString("+---------------------------------------+\n");
+    PutString("|    M05xx System Driver Sample Code    |\n");
+    PutString("+---------------------------------------+\n");
 
     if(M32(FLAG_ADDR) == SIGNATURE)
     {
-        printf("  CPU Reset success!\n");
+        PutString("  CPU Reset success!\n");
         M32(FLAG_ADDR) = 0;
-        printf("  Press any key to continue ...\n");
-        getchar();
+        PutString("  Press any key to continue ...\n");
+        GetChar();
     }
 
     /*---------------------------------------------------------------------------------------------------------*/
@@ -260,12 +286,14 @@ int32_t main(void)
     /*---------------------------------------------------------------------------------------------------------*/
 
     /* Read Part Device ID */
+#if !( __GNUC__ )
     printf("Product ID 0x%x\n", SYS_ReadPDID());
-
+#endif
     /* Get reset source from last operation */
     u32data = SYS_GetResetSrc();
+#if !( __GNUC__ )
     printf("Reset Source 0x%x\n", u32data);
-
+#endif
     /* Clear reset source */
     SYS_ClearResetSrc(u32data);
 
@@ -275,7 +303,7 @@ int32_t main(void)
     /* Check if the write-protected registers are unlocked before BOD setting and CPU Reset */
     if(SYS_IsRegLocked() == 0)
     {
-        printf("Protected Address is Unlocked\n");
+        PutString("Protected Address is Unlocked\n");
     }
 
     /* Enable Brown-Out Detector, and set Brown-Out Detector voltage 2.7V */
@@ -292,7 +320,7 @@ int32_t main(void)
 
     /* Write a signature work to SRAM to check if it is reset by software */
     M32(FLAG_ADDR) = SIGNATURE;
-    printf("\n\n  >>> Reset CPU <<<\n");
+    PutString("\n\n  >>> Reset CPU <<<\n");
 
     /* Waiting for message send out */
     UART_WAIT_TX_EMPTY(UART0);

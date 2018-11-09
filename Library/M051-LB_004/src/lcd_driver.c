@@ -74,7 +74,7 @@ static void SetPACA(uint8_t PA, uint8_t CA)
     SpiWrite(0xB0 | PA);
 
     // Set CA MSB
-    SpiWrite(0x10 | (CA >> 4) & 0xF);
+    SpiWrite(0x10 | ((CA >> 4) & 0xF));
 
     // Set CA LSB
     SpiWrite(0x00 | (CA & 0xF));

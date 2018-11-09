@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include "M051Series.h"
 
+extern char GetChar(void);
 
 void SYS_Init(void)
 {
@@ -50,7 +51,7 @@ int main()
     do
     {
         printf("Input: ");
-        ch = getchar();
+        ch = GetChar();
         printf("%c\n", ch);
     }
     while(1);

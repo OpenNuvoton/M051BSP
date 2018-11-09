@@ -128,9 +128,9 @@ int main(void)
     LCD_Init();
     LCD_EnableBackLight();
     LCD_ClearScreen();
-
+#if !( __GNUC__ )
     printf("CPU @ %d Hz\n", SystemCoreClock);
-
+#endif
     LCD_Print(0, "Smpl_DeepSleep");
 
     /*Initialize external interrupt*/

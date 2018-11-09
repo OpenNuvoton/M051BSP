@@ -180,10 +180,10 @@ void I2C0_Init(void)
 
     /* I2C0 clock divider, I2C Bus Clock = PCLK / (4*125) = 100kHz */
     I2C0->I2CLK = 125 - 1;
-
+#if !( __GNUC__ )
     /* Get I2C0 Bus Clock */
     printf("I2C clock %d Hz\n", (SystemCoreClock / (((I2C0->I2CLK) + 1) << 2)));
-
+#endif
     /* Set I2C0 4 Slave Addresses */
     /* Slave Address : 0x15 */
     I2C0->I2CADDR0 = (I2C0->I2CADDR0 & ~I2C_I2CADDR_I2CADDR_Msk) | (0x15 << I2C_I2CADDR_I2CADDR_Pos);

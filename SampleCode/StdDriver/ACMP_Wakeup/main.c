@@ -15,6 +15,7 @@
 void SYS_Init(void);
 void PowerDownFunction(void);
 int IsDebugFifoEmpty(void);
+extern char GetChar(void);
 
 int32_t main(void)
 {
@@ -43,7 +44,7 @@ int32_t main(void)
     printf("the analog comparator outputs logical one; otherwise, it outputs logical zero.\n");
     printf("This chip will be waked up from power down mode when detecting a transition of analog comparator's output.\n");
     printf("Press any key to enter power down mode ...");
-    getchar();
+    GetChar();
     printf("\n");
 
     /* Configure ACMP0. Enable ACMP0 and select internal reference voltage as negative input. */

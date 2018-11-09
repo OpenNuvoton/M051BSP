@@ -22,7 +22,7 @@
 void SYS_Init(void);
 void UART0_Init(void);
 void AdcSingleModeTest(void);
-
+extern char GetChar(void);
 
 /*---------------------------------------------------------------------------------------------------------*/
 /* Define global variables and constants                                                                   */
@@ -123,7 +123,7 @@ void AdcSingleModeTest()
         printf("  [1] Single end input (channel 2 only)\n");
         printf("  [2] Differential input (channel pair 1 only)\n");
         printf("  Other keys: exit single mode test\n");
-        u8Option = getchar();
+        u8Option = GetChar();
         if(u8Option == '1')
         {
 
@@ -206,7 +206,7 @@ void ADC_IRQHandler(void)
 /* MAIN function                                                                                           */
 /*---------------------------------------------------------------------------------------------------------*/
 
-main(void)
+int main(void)
 {
 
     /* Unlock protected registers */

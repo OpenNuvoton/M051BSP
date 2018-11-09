@@ -38,6 +38,12 @@ void I2C0_IRQHandler(void)
     case 0xA8:                        /* SLA+R has been received and ACK has been returned */
     case 0xB0:
         DataLen = 0;
+        I2C_SET_DATA(I2C0, Tx_Data[DataLen++]);
+        if(DataLen < sizeof(Tx_Data))
+            I2C_SET_CONTROL_REG(I2C0, I2C_I2CON_SI | I2C_I2CON_AA);
+        else
+            I2C_SET_CONTROL_REG(I2C0, I2C_I2CON_SI);
+        break;
     case 0xB8:                        /* DATA has been transmitted and ACK has been returned */
         I2C_SET_DATA(I2C0, Tx_Data[DataLen++]);
         if(DataLen < sizeof(Tx_Data))

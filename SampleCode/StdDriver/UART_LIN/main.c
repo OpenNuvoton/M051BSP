@@ -87,7 +87,7 @@ void LIN_FunctionTest()
     do
     {
         LIN_TestItem();
-        u32Item = getchar();
+        u32Item = GetChar();
         printf("%c\n", u32Item);
         switch(u32Item)
         {
@@ -260,7 +260,7 @@ void UART1_Init()
 /* MAIN function                                                                                           */
 /*---------------------------------------------------------------------------------------------------------*/
 
-int main(void)
+int32_t main(void)
 {
     /* Unlock protected registers */
     SYS_UnlockReg();

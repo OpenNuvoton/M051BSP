@@ -19,6 +19,7 @@
 #define PLLCON_SETTING      CLK_PLLCON_50MHz_HXT
 #define PLL_CLOCK           50000000
 
+extern char GetChar(void);
 /**
  * @brief       PWMB IRQ Handler
  *
@@ -223,7 +224,7 @@ int32_t main(void)
     while(1)
     {
         printf("Press any key to start PWM Capture Test\n");
-        getchar();
+        GetChar();
 
         /*--------------------------------------------------------------------------------------*/
         /* Set the PWMB Channel 1 as PWM output function.                                               */
