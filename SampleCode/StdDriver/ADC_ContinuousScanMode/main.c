@@ -151,12 +151,12 @@ void AdcContScanModeTest()
         u8Option = GetChar();
         if(u8Option == '1')
         {
+            /* Power on ADC module */
+            ADC_POWER_ON(ADC);
+
             /* Set the ADC operation mode as continuous scan, input mode as single-end and
                  enable the analog input channel 0, 1, 2 and 3 */
             ADC_Open(ADC, ADC_ADCR_DIFFEN_SINGLE_END, ADC_ADCR_ADMD_CONTINUOUS, 0xF);
-
-            /* Power on ADC module */
-            ADC_POWER_ON(ADC);
 
             /* clear the A/D interrupt flag for safe */
             ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);
@@ -194,12 +194,12 @@ void AdcContScanModeTest()
         }
         else if(u8Option == '2')
         {
+            /* Power on ADC module */
+            ADC_POWER_ON(ADC);
+
             /* Set the ADC operation mode as continuous scan, input mode as differential and
                enable analog input channel 0 and 2 */
             ADC_Open(ADC, ADC_ADCR_DIFFEN_DIFFERENTIAL, ADC_ADCR_ADMD_CONTINUOUS, 0x5);
-
-            /* Power on ADC module */
-            ADC_POWER_ON(ADC);
 
             /* clear the A/D interrupt flag for safe */
             ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);

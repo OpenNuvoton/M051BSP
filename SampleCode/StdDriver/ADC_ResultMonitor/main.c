@@ -116,11 +116,11 @@ void AdcResultMonitorTest()
     printf("+----------------------------------------------------------------------+\n");
     printf("\nIn this test, software will compare the conversion result of channel 2.\n");
 
-    /* Set the ADC operation mode as continuous scan, input mode as single-end and enable the analog input channel 2 */
-    ADC_Open(ADC, ADC_ADCR_DIFFEN_SINGLE_END, ADC_ADCR_ADMD_CONTINUOUS, 0x1 << 2);
-
     /* Power on ADC module */
     ADC_POWER_ON(ADC);
+
+    /* Set the ADC operation mode as continuous scan, input mode as single-end and enable the analog input channel 2 */
+    ADC_Open(ADC, ADC_ADCR_DIFFEN_SINGLE_END, ADC_ADCR_ADMD_CONTINUOUS, 0x1 << 2);
 
     /* Enable ADC comparator 0. Compare condition: conversion result < 0x800; match Count=5. */
     printf("   Set the compare condition of comparator 0: channel 2 is less than 0x800; match count is 5.\n");

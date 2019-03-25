@@ -161,11 +161,11 @@ void AdcBurstModeTest()
         if(u8Option == '1')
         {
             printf("%d conversion results of channel 2:\n", BURST_COUNT);
-            /* Set the ADC operation mode as burst, input mode as single-end and enable the analog input channel 2 */
-            ADC_Open(ADC, ADC_ADCR_DIFFEN_SINGLE_END, ADC_ADCR_ADMD_BURST, 0x1 << 2);
-
             /* Power on ADC module */
             ADC_POWER_ON(ADC);
+
+            /* Set the ADC operation mode as burst, input mode as single-end and enable the analog input channel 2 */
+            ADC_Open(ADC, ADC_ADCR_DIFFEN_SINGLE_END, ADC_ADCR_ADMD_BURST, 0x1 << 2);
 
             /* clear the A/D interrupt flag for safe */
             ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);
@@ -188,12 +188,12 @@ void AdcBurstModeTest()
         else if(u8Option == '2')
         {
             printf("%d conversion results of differential input channel pair 1:\n", BURST_COUNT);
+            /* Power on ADC module */
+            ADC_POWER_ON(ADC);
+
             /* Set the ADC operation mode as burst, input mode as differential and
                              enable analog input channel 2 for differential input channel pair 1*/
             ADC_Open(ADC, ADC_ADCR_DIFFEN_DIFFERENTIAL, ADC_ADCR_ADMD_BURST, 1 << 2);
-
-            /* Power on ADC module */
-            ADC_POWER_ON(ADC);
 
             /* clear the A/D interrupt flag for safe */
             ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT);
