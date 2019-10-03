@@ -11,7 +11,7 @@
 #include "isp_user.h"
 #include "fmc_user.h"
 
-__align(4) uint8_t response_buff[64];
+__align(4) uint8_t response_buff[64 + 4];
 __align(4) static uint8_t aprom_buf[FMC_FLASH_PAGE_SIZE];
 uint32_t bUpdateApromCmd;
 uint32_t g_apromSize, g_dataFlashAddr, g_dataFlashSize;
@@ -37,7 +37,7 @@ int ParseCmd(unsigned char *buffer, uint8_t len)
     uint32_t lcmd, srclen, i, regcnf0, security;
     unsigned char *pSrc;
     static uint32_t gcmd;
-    response = response_buff;
+    response = response_buff + 4;
     pSrc = buffer;
     srclen = len;
     lcmd = inpw(pSrc);

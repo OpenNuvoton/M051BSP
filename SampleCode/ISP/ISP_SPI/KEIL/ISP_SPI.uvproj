@@ -427,11 +427,6 @@
               <FileType>1</FileType>
               <FilePath>..\targetdev.c</FilePath>
             </File>
-            <File>
-              <FileName>spi_transfer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\spi_transfer.c</FilePath>
-            </File>
           </Files>
         </Group>
         <Group>

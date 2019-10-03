@@ -31,33 +31,11 @@ uint32_t GetApromSize()
     while(1);
 }
 
-// Data Flash is shared with APROM.
-// The size and start address are defined in CONFIG1.
+// Data Flash size is 4K.
 void GetDataFlashInfo(uint32_t *addr, uint32_t *size)
 {
-    uint32_t uData;
-    *size = 0;
-    FMC_Read_User(Config0, &uData);
-    uData &= 0x000FFFFF;
-
-    if((uData & 0x01) == 0)    //DFEN enable
-    {
-        FMC_Read_User(Config1, &uData);
-        uData &= 0x000FFFFF;
-
-        if(uData > g_apromSize || uData & (FMC_FLASH_PAGE_SIZE - 1))    //avoid config1 value from error
-        {
-            uData = g_apromSize;
-        }
-
-        *addr = uData;
-        *size = g_apromSize - uData;
-    }
-    else
-    {
-        *addr = g_apromSize;
-        *size = 0;
-    }
+    *addr = 0x1F000;
+    *size = 4096;
 }
 
 /*** (C) COPYRIGHT 2019 Nuvoton Technology Corp. ***/
