@@ -6,6 +6,8 @@
  * @brief    This is the header file of i2c_software_gpio.c
  *
  * @note
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
  *****************************************************************************/
 

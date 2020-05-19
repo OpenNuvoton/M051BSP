@@ -6,6 +6,8 @@
  * @brief    M051 series Analog Comparator(ACMP) driver header file
  *
  * @note
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 #ifndef __ACMP_H__

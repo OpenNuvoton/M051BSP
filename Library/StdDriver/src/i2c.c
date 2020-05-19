@@ -6,6 +6,8 @@
  * @brief    M051 series I2C driver source file
  *
  * @note
+ * SPDX-License-Identifier: Apache-2.0
+ *
  * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
  *****************************************************************************/
 #include "M051Series.h"
