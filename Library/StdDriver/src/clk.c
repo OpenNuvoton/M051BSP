@@ -330,7 +330,7 @@ void CLK_SetModuleClock(uint32_t u32ModuleIdx, uint32_t u32ClkSrc, uint32_t u32C
     {
         u32div = (uint32_t)&CLK->CLKDIV + ((MODULE_CLKDIV(u32ModuleIdx)) * 4);
         u32tmp = *(volatile uint32_t *)(u32div);
-        u32tmp = ((u32tmp & (~MODULE_CLKDIV_Msk(u32ModuleIdx) << MODULE_CLKDIV_Pos(u32ModuleIdx)))) | u32ClkDiv;
+        u32tmp = (u32tmp & (~(MODULE_CLKDIV_Msk(u32ModuleIdx) << MODULE_CLKDIV_Pos(u32ModuleIdx)))) | u32ClkDiv;
         *(volatile uint32_t *)(u32div) = u32tmp;
     }
 }
