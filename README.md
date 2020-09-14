@@ -8,7 +8,7 @@ This BSP folder
 - Revision History.pdf<br>
 	Show all the revision history about specific BSP.
 
-- NuMicro M05xxDN_DE Driver Reference Guide.chm<br>
+- NuMicro M051 BSP Driver Reference Guide.chm<br>
 	Describe the definition, input and output of each API.
 
 ## .\Library\
