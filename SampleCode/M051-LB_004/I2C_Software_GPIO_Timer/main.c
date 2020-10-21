@@ -10,7 +10,7 @@
 *****************************************************************************/
 #include <stdio.h>
 #include "M051Series.h"
-#include "i2c_software_gpio_with_timer.h"
+#include "I2C_Software_GPIO_with_Timer.h"
 
 #define PLLCON_SETTING      CLK_PLLCON_50MHz_HXT
 #define PLL_CLOCK           50000000

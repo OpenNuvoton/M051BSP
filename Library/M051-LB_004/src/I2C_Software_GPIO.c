@@ -12,7 +12,7 @@
  *****************************************************************************/
 
 #include <stdio.h>
-#include "i2c_software_gpio.h"
+#include "I2C_Software_GPIO.h"
 
 /* SDA = GP1.4, CLK = GP1.5 */
 #define I2C_SW_SDA     P14

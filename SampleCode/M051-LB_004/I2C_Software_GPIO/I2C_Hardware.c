@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 #include "M051Series.h"
-#include "i2c_hardware.h"
+#include "I2C_Hardware.h"
 
 uint8_t Tx_Data[4] = {0xaa, 0x22, 0x33, 0x44};
 uint8_t Rx_Data[5];

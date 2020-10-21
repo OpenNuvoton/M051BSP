@@ -47,7 +47,7 @@
 		<link>
 			<name>Library/Library</name>
 			<type>2</type>
-			<locationURI>PARENT-5-PROJECT_LOC/Library/StdDriver/Src</locationURI>
+			<locationURI>PARENT-5-PROJECT_LOC/Library/StdDriver/src</locationURI>
 		</link>
 		<link>
 			<name>User/ap_image.S</name>
@@ -57,7 +57,7 @@
 		<link>
 			<name>User/aprom_main.c</name>
 			<type>1</type>
-			<locationURI>PARENT-2-PROJECT_LOC/aprom_main.c</locationURI>
+			<locationURI>PARENT-2-PROJECT_LOC/APROM_main.c</locationURI>
 		</link>
 	</linkedResources>
 	<filteredResources>

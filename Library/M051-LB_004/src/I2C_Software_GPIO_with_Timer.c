@@ -11,7 +11,7 @@
  * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
  *****************************************************************************/
 #include <stdio.h>
-#include "i2c_software_gpio_with_timer.h"
+#include "I2C_Software_GPIO_with_Timer.h"
 
 /* SDA = GP3.4, CLK = GP3.5 */
 #define I2C_SW_SDA P34

@@ -5,8 +5,8 @@
 /*---------------------------------------------------------------------------------------------------------*/
 #include <stdio.h>
 #include "M051Series.h"
-#include "lcd_Driver.h"
-#include "EEPROM_24LC64.h"
+#include "lcd_driver.h"
+#include "EEPROM_24lc64.h"
 #include "spi_flash.h"
 
 #define PLLCON_SETTING      CLK_PLLCON_50MHz_HXT

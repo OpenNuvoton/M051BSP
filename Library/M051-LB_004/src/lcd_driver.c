@@ -11,7 +11,7 @@
  * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
  *****************************************************************************/
 #include "M051Series.h"
-#include "LCD_Driver.h"
+#include "lcd_driver.h"
 
 extern  const char Ascii[];
 

@@ -12,8 +12,8 @@
 #include <stdio.h>
 #include <string.h>
 #include "M051Series.h"
-#include "LCD_Driver.h"
-#include "EEPROM_24LC64.h"
+#include "lcd_driver.h"
+#include "EEPROM_24lc64.h"
 
 #define PLLCON_SETTING      CLK_PLLCON_50MHz_HXT
 #define PLL_CLOCK           50000000

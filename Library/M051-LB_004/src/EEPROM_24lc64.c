@@ -13,7 +13,7 @@
 
 #include <stdio.h>
 #include "M051Series.h"
-#include "EEPROM_24LC64.h"
+#include "EEPROM_24lc64.h"
 
 #define EEPROM_READ_ADDR      0xA1 /* Address of slave for read  */
 #define EEPROM_WRITE_ADDR     0xA0 /* Address of slave for write */

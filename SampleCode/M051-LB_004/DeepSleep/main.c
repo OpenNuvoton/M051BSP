@@ -5,7 +5,7 @@
 /*---------------------------------------------------------------------------------------------------------*/
 #include <stdio.h>
 #include "M051Series.h"
-#include "LCD_Driver.h"
+#include "lcd_driver.h"
 
 #define PLLCON_SETTING      CLK_PLLCON_50MHz_HXT
 #define PLL_CLOCK           50000000
