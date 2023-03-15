@@ -337,7 +337,7 @@ extern "C"
  *
  * @return      None
  *
- * @details     This function is used to enable specified GPIO pin interrupt.
+ * @details     This function is used to disable specified GPIO pin interrupt.
  */
 #define GPIO_DisableEINT0   GPIO_DisableInt
 
@@ -365,7 +365,7 @@ extern "C"
  *
  * @return      None
  *
- * @details     This function is used to enable specified GPIO pin interrupt.
+ * @details     This function is used to disable specified GPIO pin interrupt.
  */
 #define GPIO_DisableEINT1   GPIO_DisableInt
 
