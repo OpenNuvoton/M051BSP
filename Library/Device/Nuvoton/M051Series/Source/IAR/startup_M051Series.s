@@ -86,7 +86,7 @@ __vector_table
 ;;
     THUMB
     PUBWEAK Reset_Handler   
-    SECTION .text:CODE:REORDER(2)       ; 4 bytes alignment
+    SECTION .text:CODE:REORDER:NOROOT(2)       ; 4 bytes alignment
 Reset_Handler
         LDR     R0, =0x50000100
         ; Unlock Register                
@@ -144,7 +144,7 @@ Reset_Handler
     PUBWEAK PWRWU_IRQHandler  
     PUBWEAK ADC_IRQHandler
     PUBWEAK RTC_IRQHandler  
-    SECTION .text:CODE:REORDER(2)
+    SECTION .text:CODE:REORDER:NOROOT(2)
 HardFault_Handler 
 NMI_Handler       
 SVC_Handler       
