@@ -264,7 +264,7 @@ int32_t main(void)
 
     /*
         To measure Power-down current:
-        On NuMaker-M051L V1.0 board, remove components, e.g. Nu-Link2-Me.
+        On NuMaker-M051L V1.0 board, remove components, e.g. Nu-Link2-Me and R7.
         Remove R16 and then user can measure target chip power consumption by AMMETER connector.
     */
 

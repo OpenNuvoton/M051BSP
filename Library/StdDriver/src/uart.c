@@ -132,7 +132,7 @@ void UART_DisableInt(UART_T*  uart, uint32_t u32InterruptFlag)
  *
  *    @return       None
  *
- *    @details      The function is used to Enable UART auto flow control.
+ *    @details      The function is used to enable UART auto flow control.
  */
 void UART_EnableFlowCtrl(UART_T* uart)
 {
@@ -252,7 +252,7 @@ uint32_t UART_Read(UART_T* uart, uint8_t *pu8RxBuf, uint32_t u32ReadBytes)
         {
             u32delayno++;
             if(u32delayno >= 0x40000000)
-                return FALSE;
+                return u32Count;
         }
         pu8RxBuf[u32Count] = uart->RBR;    /* Get Data from UART RX  */
     }
@@ -462,11 +462,11 @@ uint32_t UART_Write(UART_T* uart, uint8_t *pu8TxBuf, uint32_t u32WriteBytes)
     for(u32Count = 0; u32Count != u32WriteBytes; u32Count++)
     {
         u32delayno = 0;
-        while((uart->FSR & UART_FSR_TE_FLAG_Msk) == 0)  /* Wait Tx empty and Time-out manner */
+        while(uart->FSR & UART_FSR_TX_FULL_Msk) == 0)  /* Wait Tx not full or Time-out manner */
         {
             u32delayno++;
             if(u32delayno >= 0x40000000)
-                return FALSE;
+                return u32Count;
         }
         uart->THR = pu8TxBuf[u32Count];    /* Send UART Data from buffer */
     }
