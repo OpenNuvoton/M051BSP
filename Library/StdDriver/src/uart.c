@@ -462,7 +462,7 @@ uint32_t UART_Write(UART_T* uart, uint8_t *pu8TxBuf, uint32_t u32WriteBytes)
     for(u32Count = 0; u32Count != u32WriteBytes; u32Count++)
     {
         u32delayno = 0;
-        while(uart->FSR & UART_FSR_TX_FULL_Msk) == 0)  /* Wait Tx not full or Time-out manner */
+        while((uart->FSR & UART_FSR_TX_FULL_Msk) == 0)  /* Wait Tx not full or Time-out manner */
         {
             u32delayno++;
             if(u32delayno >= 0x40000000)
