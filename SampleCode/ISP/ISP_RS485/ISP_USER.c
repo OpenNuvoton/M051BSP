@@ -10,8 +10,8 @@
 #include "string.h"
 #include "ISP_USER.h"
 
-__align(4) uint8_t response_buff[64];
-__align(4) static uint8_t aprom_buf[FMC_FLASH_PAGE_SIZE];
+__attribute__((aligned(4))) uint8_t response_buff[64];
+__attribute__((aligned(4))) static uint8_t aprom_buf[FMC_FLASH_PAGE_SIZE];
 uint32_t bUpdateApromCmd;
 uint32_t g_apromSize, g_dataFlashAddr, g_dataFlashSize;
 
@@ -128,7 +128,7 @@ int ParseCmd(unsigned char *buffer, uint8_t len)
     } else if (lcmd == CMD_DISCONNECT) {
         return 0;
     } else if ((lcmd == CMD_UPDATE_APROM) || (lcmd == CMD_ERASE_ALL)) {
-        EraseAP(FMC_APROM_BASE, (g_apromSize < g_dataFlashAddr) ? g_apromSize : g_dataFlashAddr); // erase APROM // g_dataFlashAddr, g_apromSize
+        EraseAP(FMC_APROM_BASE, (g_apromSize < g_dataFlashAddr) ? g_apromSize : g_dataFlashAddr); // erase APROM
 
         if (lcmd == CMD_ERASE_ALL) { //erase data flash
             EraseAP(g_dataFlashAddr, g_dataFlashAddr + g_dataFlashSize);

@@ -3,7 +3,7 @@
  * @version  V2.10
  * $Revision: 3 $
  * $Date: 14/01/28 11:44a $
- * @brief    M051 Series Timer Controller and Watchdog Timer Driver Sample Code
+ * @brief    M051 Series Divider Sample Code
  *
  * @note
  * Copyright (C) 2011 Nuvoton Technology Corp. All rights reserved.
@@ -46,11 +46,11 @@ void SYS_Init(void)
     CLK->CLKSEL1 = CLK_CLKSEL1_UART_S_PLL;
 
     /* Update System Core Clock */
-    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
+    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CyclesPerUs automatically. */
     //SystemCoreClockUpdate();
     PllClock        = PLL_CLOCK;            // PLL
     SystemCoreClock = PLL_CLOCK / 1;        // HCLK
-    CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
+    CyclesPerUs     = PLL_CLOCK / 1000000;  // For CLK_SysTickDelay()
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */

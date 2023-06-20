@@ -23,6 +23,7 @@
   @{
 */
 
+int32_t g_FMC_i32ErrCode = 0; /*!< FMC global error code */
 
 /** @addtogroup FMC_EXPORTED_FUNCTIONS FMC Exported Functions
   @{
@@ -231,13 +232,21 @@ uint32_t FMC_ReadDataFlashBaseAddr(void)
   * @details     This function is used to read the settings of user configuration.
   *              if u32Count = 1, Only CONFIG0 will be returned to the buffer specified by u32Config.
   *              if u32Count = 2, Both CONFIG0 and CONFIG1 will be returned.
+  *
+  * @note        Global error code g_FMC_i32ErrCode
+  *              -1  Read failed
   */
 int32_t FMC_ReadConfig(uint32_t *u32Config, uint32_t u32Count)
 {
     int32_t i;
 
+    g_FMC_i32ErrCode = 0;
+
     for(i = 0; i < u32Count; i++)
+    {
         u32Config[i] = FMC_Read(FMC_CONFIG_BASE + i * 4);
+        if (g_FMC_i32ErrCode != 0) return -1;
+    }
 
     return 0;
 }
@@ -256,16 +265,23 @@ int32_t FMC_ReadConfig(uint32_t *u32Config, uint32_t u32Count)
   *           User must erase User Configuration before writing it.
   *           User Configuration is also be page erase. User needs to backup necessary data
   *           before erase User Configuration.
+  *
+  * @note     Global error code g_FMC_i32ErrCode
+  *           -1  Program failed or time-out
   */
 int32_t FMC_WriteConfig(uint32_t *u32Config, uint32_t u32Count)
 {
     int32_t i;
 
+    g_FMC_i32ErrCode = 0;
+
     for(i = 0; i < u32Count; i++)
     {
         FMC_Write(FMC_CONFIG_BASE + i * 4, u32Config[i]);
-        if(FMC_Read(FMC_CONFIG_BASE + i * 4) != u32Config[i])
-            return -1;
+        if (g_FMC_i32ErrCode != 0) return -1;
+
+        if(FMC_Read(FMC_CONFIG_BASE + i * 4) != u32Config[i]) return -1;
+        if (g_FMC_i32ErrCode != 0) return -1;
     }
 
     return 0;

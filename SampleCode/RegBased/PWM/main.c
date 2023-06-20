@@ -47,7 +47,7 @@ volatile uint32_t g_u32Pulse = 0;
 */
 static const uint16_t g_au16ScaleFreq[7] = {TENOR_C, TENOR_D, TENOR_E, TENOR_F, TENOR_G, TENOR_A, TENOR_B};
 static const uint16_t g_au16ScaleCnr[7] =  {11471, 10220, 9103, 8594, 7652, 6817, 6071};
-static const uint16_t g_au16ScaleCmr[7] =  {6882 , 6131 , 5461, 5156, 4590, 4089, 3642};
+static const uint16_t g_au16ScaleCmr[7] =  {6882, 6131, 5461, 5156, 4590, 4089, 3642};
 
 /**
  * @brief       PWMA IRQ Handler
@@ -142,7 +142,7 @@ void SYS_Init(void)
     //SystemCoreClockUpdate();
     PllClock        = PLL_CLOCK;            // PLL
     SystemCoreClock = PLL_CLOCK / 1;        // HCLK
-    CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
+    CyclesPerUs     = PLL_CLOCK / 1000000;  // For CLK_SysTickDelay()
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
@@ -173,6 +173,7 @@ void UART0_Init(void)
 int32_t main(void)
 {
     uint8_t u8Item, u8ItemOK;
+    uint32_t u32TimeOutCnt;
 
     /* Unlock protected registers */
     SYS_UnlockReg();
@@ -273,7 +274,15 @@ int32_t main(void)
             /* Enable PWM Timer */
             PWMA->PCR |= PWM_PCR_CH0EN_Msk;
 
-            while(g_u8PWMCount);
+            u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+            while(g_u8PWMCount)
+            {
+                if(--u32TimeOutCnt == 0)
+                {
+                    printf("Wait for PWM interrupt time-out!\n");
+                    break;
+                }
+            }
 
             /*--------------------------------------------------------------------------------------*/
             /* Stop PWM Timer (Recommended procedure method 2)                                      */
@@ -285,7 +294,15 @@ int32_t main(void)
             NVIC_DisableIRQ((IRQn_Type)(PWMA_IRQn));
 
             /* Wait until PWMA channel 0 Timer Stop */
-            while(PWMA->PDR0 != 0);
+            u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+            while(PWMA->PDR0 != 0)
+            {
+                if(--u32TimeOutCnt == 0)
+                {
+                    printf("Wait for PWM timer stop time-out!\n");
+                    break;
+                }
+            }
 
             /* Disable the PWM Timer */
             PWMA->PCR &= ~PWM_PCR_CH0EN_Msk;

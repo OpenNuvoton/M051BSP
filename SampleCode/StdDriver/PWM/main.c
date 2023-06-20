@@ -139,11 +139,11 @@ void SYS_Init(void)
     SYS_ResetModule(PWM03_RST);
 
     /* Update System Core Clock */
-    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
+    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CyclesPerUs automatically. */
     //SystemCoreClockUpdate();
     PllClock        = PLL_CLOCK;            // PLL
     SystemCoreClock = PLL_CLOCK / 1;        // HCLK
-    CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
+    CyclesPerUs     = PLL_CLOCK / 1000000;  // For CLK_SysTickDelay()
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
@@ -175,6 +175,7 @@ void UART0_Init(void)
 int32_t main(void)
 {
     uint8_t u8Item, u8ItemOK;
+    uint32_t u32TimeOutCnt;
 
     /* Unlock protected registers */
     SYS_UnlockReg();
@@ -263,7 +264,15 @@ int32_t main(void)
             /* Enable PWM Timer */
             PWM_Start(PWMA, 0x1);
 
-            while(g_u8PWMCount);
+            u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+            while(g_u8PWMCount)
+            {
+                if(--u32TimeOutCnt == 0)
+                {
+                    printf("Wait for PWM interrupt time-out!\n");
+                    break;
+                }
+            }
 
             /*--------------------------------------------------------------------------------------*/
             /* Stop PWM Timer (Recommended procedure method 2)                                      */
@@ -271,11 +280,19 @@ int32_t main(void)
             /* Set PWM Timer counter as 0 in Call back function                                     */
             /*--------------------------------------------------------------------------------------*/
 
-            /* Disable PWMB NVIC */
+            /* Disable PWMA NVIC */
             NVIC_DisableIRQ((IRQn_Type)(PWMA_IRQn));
 
-            /* Wait until PWMB channel 0 Timer Stop */
-            while(PWMA->PDR0 != 0);
+            /* Wait until PWMA channel 0 Timer Stop */
+            u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+            while(PWMA->PDR0 != 0)
+            {
+                if(--u32TimeOutCnt == 0)
+                {
+                    printf("Wait for PWM timer stop time-out!\n");
+                    break;
+                }
+            }
 
             /* Disable the PWM Timer */
             PWM_Stop(PWMA, 0x1);

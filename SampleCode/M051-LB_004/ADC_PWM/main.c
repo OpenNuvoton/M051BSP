@@ -28,7 +28,7 @@ void SYS_Init(void)
     CLK->CLKDIV |= (3 << CLK_CLKDIV_ADC_N_Pos);
 
     /* Update System Core Clock */
-    /* User can use SystemCoreClockUpdate() to calculate SystemCoreClock and CycylesPerUs automatically. */
+    /* User can use SystemCoreClockUpdate() to calculate SystemCoreClock and CyclesPerUs automatically. */
     SystemCoreClockUpdate();
 
     /*---------------------------------------------------------------------------------------------------------*/

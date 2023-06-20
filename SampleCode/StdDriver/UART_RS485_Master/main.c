@@ -38,7 +38,7 @@ void RS485_9bitModeMaster(void);
 /*---------------------------------------------------------------------------------------------------------*/
 void RS485_SendAddressByte(uint8_t u8data)
 {
-    /* Set UART parity as MARK and ship baud rate setting */
+    /* Set UART parity as MARK and skip baud rate setting */
     UART_SetLine_Config(UART1, 0, UART_WORD_LEN_8, UART_PARITY_MARK, UART_STOP_BIT_1);
 
     /* Send data */
@@ -47,7 +47,7 @@ void RS485_SendAddressByte(uint8_t u8data)
 
 void RS485_SendDataByte(uint8_t *pu8TxBuf, uint32_t u32WriteBytes)
 {
-    /* Set UART parity as SPACE and ship baud rate setting */
+    /* Set UART parity as SPACE and skip baud rate setting */
     UART_SetLine_Config(UART1, 0, UART_WORD_LEN_8, UART_PARITY_SPACE, UART_STOP_BIT_1);
 
     /* Send data */
@@ -71,8 +71,8 @@ void RS485_9bitModeMaster()
     printf("+-----------------------------------------------------------+\n");
     printf("|    _______                                    _______     |\n");
     printf("|   |       |                                  |       |    |\n");
-    printf("|   |Master |---TXD1(P1.3) <====> RXD1(P1.2)---| Slave |    |\n");
-    printf("|   |       |---RTS1(P0.1) <====> RTS1(P0.1)---|       |    |\n");
+    printf("|   |Master |---TXD1(P1.3)        RXD1(P1.2)---| Slave |    |\n");
+    printf("|   |       |---RTS1(P0.1)        RTS1(P0.1)---|       |    |\n");
     printf("|   |_______|                                  |_______|    |\n");
     printf("|                                                           |\n");
     printf("+-----------------------------------------------------------+\n");
@@ -85,22 +85,32 @@ void RS485_9bitModeMaster()
             2.Master will send four different address with 10 bytes data to test Slave.
             3.Address bytes : the parity bit should be '1'. (Set UA_LCR = 0x2B)
             4.Data bytes : the parity bit should be '0'. (Set UA_LCR = 0x3B)
-            5.RTS pin is low in idle state. When master is sending,
-              RTS pin will be pull high.
+            5.RTS pin is low in idle state. When master is sending, RTS pin will be pull high.
 
         Slave:
             1.Set AAD and AUD mode firstly. LEV_RTS is set to '0'.
             2.The received byte, parity bit is '1' , is considered "ADDRESS".
             3.The received byte, parity bit is '0' , is considered "DATA".  (Default)
             4.AAD: The slave will ignore any data until ADDRESS match ADDR_MATCH value.
-              When RLS and RDA interrupt is happened,it means the ADDRESS is received.
-              Check if RS485_ADD_DETF is set and read UA_RBR to clear ADDRESS stored in rx_fifo.
+              When RLS and RDA interrupt is happened, it means the ADDRESS is received.
+              Check if RS485_ADD_DETF is set and read UA_RBR to clear ADDRESS stored in RX FIFO.
 
               NMM: The slave will ignore data byte until disable RX_DIS.
               When RLS and RDA interrupt is happened,it means the ADDRESS is received.
               Check the ADDRESS is match or not by user in UART_IRQHandler.
-              If the ADDRESS is match,clear RX_DIS bit to receive data byte.
-              If the ADDRESS is not match,set RX_DIS bit to avoid data byte stored in FIFO.
+              If the ADDRESS is match, clear RX_DIS bit to receive data byte.
+              If the ADDRESS is not match, set RX_DIS bit to avoid data byte stored in FIFO.
+
+        Note: User can measure transmitted data waveform on TXD and RXD pin.
+              RTS pin is used for RS485 transceiver to control transmission direction.
+              RTS pin is low in idle state. When master is sending data, RTS pin will be pull high.
+              The connection to RS485 transceiver is as following figure for reference.
+               __________     ___________      ___________      __________
+              |          |   |           |    |           |    |          |
+              |Master    |   |RS485      |    |RS485      |    |Slave     |
+              | UART_TXD |---|Transceiver|<==>|Transceiver|----| UART_RXD |
+              | UART_nRTS|---|           |    |           |----| UART_nRTS|
+              |__________|   |___________|    |___________|    |__________|
     */
 
     printf("\n");
@@ -116,12 +126,11 @@ void RS485_9bitModeMaster()
 
     /* Set RS485-Master as AUD mode */
     /* Enable AUD mode to HW control RTS pin automatically */
-    /* You also can use GPIO to control RTS pin for replacing AUD mode*/
+    /* You also can use GPIO to control RTS pin for replacing AUD mode */
     UART_SelectRS485Mode(UART1, UART_ALT_CSR_RS485_AUD_Msk, 0);
 
     /* Set RTS pin active level as high level active */
-    UART1->MCR &= ~UART_MCR_LEV_RTS_Msk;
-    UART1->MCR |= UART_RTS_IS_HIGH_LEV_ACTIVE;
+    UART1->MCR = (UART1->MCR & (~UART_MCR_LEV_RTS_Msk)) | UART_RTS_IS_HIGH_LEV_ACTIVE;
 
     /* Prepare Data to transmit */
     for(i32 = 0; i32 < 10; i32++)
@@ -132,7 +141,7 @@ void RS485_9bitModeMaster()
         g_u8SendDataGroup4[i32] = i32 + 30;
     }
 
-    /* Send For different Address and data for test */
+    /* Send different address and data for test */
     printf("Send Address %x and data 0~9\n", MATCH_ADDRSS1);
     RS485_SendAddressByte(MATCH_ADDRSS1);
     RS485_SendDataByte(g_u8SendDataGroup1, 10);

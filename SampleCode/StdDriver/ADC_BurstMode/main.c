@@ -143,6 +143,7 @@ void AdcBurstModeTest()
 {
     uint8_t  u8Option;
     uint32_t u32Count;
+    uint32_t u32TimeOutCnt;
 
     printf("\n\nConversion rate: %d samples/second\n", ADC_GetConversionRate());
     printf("\n");
@@ -178,7 +179,15 @@ void AdcBurstModeTest()
             g_u32AdcDataCount = 0;
             ADC_START_CONV(ADC);
 
-            while(g_u32AdcDataCount < BURST_COUNT);
+            u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+            while(g_u32AdcDataCount < BURST_COUNT)
+            {
+                if(--u32TimeOutCnt == 0)
+                {
+                    printf("Wait for ADC conversion done time-out!\n");
+                    return;
+                }
+            }
 
             /* Stop A/D conversion */
             ADC_STOP_CONV(ADC);
@@ -206,7 +215,15 @@ void AdcBurstModeTest()
             g_u32AdcDataCount = 0;
             ADC_START_CONV(ADC);
 
-            while(g_u32AdcDataCount < BURST_COUNT);
+            u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+            while(g_u32AdcDataCount < BURST_COUNT)
+            {
+                if(--u32TimeOutCnt == 0)
+                {
+                    printf("Wait for ADC conversion done time-out!\n");
+                    return;
+                }
+            }
 
             /* Stop A/D conversion */
             ADC_STOP_CONV(ADC);

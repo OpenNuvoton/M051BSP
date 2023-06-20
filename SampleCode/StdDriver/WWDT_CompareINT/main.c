@@ -86,7 +86,7 @@ void SYS_Init(void)
     CLK->CLKSEL2 = CLK_CLKSEL2_WWDT_S_HCLK_DIV2048;
 
     /* Update System Core Clock */
-    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
+    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CyclesPerUs automatically. */
     SystemCoreClockUpdate();
 
     /*---------------------------------------------------------------------------------------------------------*/

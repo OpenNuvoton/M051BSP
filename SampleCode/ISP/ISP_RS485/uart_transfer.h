@@ -16,7 +16,7 @@
 
 /*-------------------------------------------------------------*/
 
-extern uint8_t  uart_rcvbuf[];
+extern uint8_t uart_rcvbuf[];
 extern uint8_t volatile bUartDataReady;
 extern uint8_t volatile bufhead;
 

@@ -64,7 +64,7 @@ void SYS_Init(void)
     //SystemCoreClockUpdate();
     PllClock        = PLL_CLOCK;            // PLL
     SystemCoreClock = PLL_CLOCK / 1;        // HCLK
-    CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
+    CyclesPerUs     = PLL_CLOCK / 1000000;  // For CLK_SysTickDelay()
 
     /* Enable UART module clock */
     CLK->APBCLK |= CLK_APBCLK_UART0_EN_Msk;
@@ -128,6 +128,8 @@ void UART0_Init()
 /*---------------------------------------------------------------------------------------------------------*/
 void AdcResultMonitorTest()
 {
+    uint32_t u32TimeOutCnt;
+
     printf("\n");
     printf("+----------------------------------------------------------------------+\n");
     printf("|           ADC compare function (result monitor) sample code          |\n");
@@ -177,7 +179,15 @@ void AdcResultMonitorTest()
     ADC->ADCR |= ADC_ADCR_ADST_Msk;
 
     /* Wait ADC compare interrupt */
-    while((g_u32AdcCmp0IntFlag == 0) && (g_u32AdcCmp1IntFlag == 0));
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while((g_u32AdcCmp0IntFlag == 0) && (g_u32AdcCmp1IntFlag == 0))
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            printf("Wait for ADC compare interrupt time-out!\n");
+            return;
+        }
+    }
 
     /* Stop A/D conversion */
     ADC->ADCR &= ~ADC_ADCR_ADST_Msk;

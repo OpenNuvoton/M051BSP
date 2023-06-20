@@ -50,6 +50,8 @@ extern "C"
 #define I2C_GCMODE_ENABLE           1      /*!< Enable  I2C GC Mode                                                       */
 #define I2C_GCMODE_DISABLE          0      /*!< Disable I2C GC Mode                                                       */
 
+#define I2C_TIMEOUT                 SystemCoreClock /*!< I2C time-out counter (1 second time-out)                          */
+
 /*@}*/ /* end of group I2C_EXPORTED_CONSTANTS */
 
 /** @addtogroup I2C_EXPORTED_FUNCTIONS I2C Exported Functions
@@ -173,8 +175,11 @@ extern "C"
  */
 static __INLINE void I2C_STOP(I2C_T *i2c)
 {
+    uint32_t u32TimeOutCnt = I2C_TIMEOUT;
+
     (i2c)->I2CON |= (I2C_I2CON_SI_Msk | I2C_I2CON_STO_Msk);
-    while((i2c)->I2CON & I2C_I2CON_STO_Msk);
+    while((i2c)->I2CON & I2C_I2CON_STO_Msk)
+        if(--u32TimeOutCnt == 0) break;
 }
 
 void I2C_ClearTimeoutFlag(I2C_T *i2c);

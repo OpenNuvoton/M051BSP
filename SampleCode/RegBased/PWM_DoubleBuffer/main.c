@@ -49,7 +49,7 @@ void PWMA_IRQHandler(void)
         PWMA->CMR0 = 100;
     }
     toggle ^= 1;
-    // Clear channel 0 period interrupt flag;
+    // Clear channel 0 period interrupt flag
     PWMA->PIIR |= PWM_PIIR_PWMIF0_Msk;
 }
 
@@ -103,12 +103,12 @@ void SYS_Init(void)
     //SystemCoreClockUpdate();
     PllClock        = PLL_CLOCK;            // PLL
     SystemCoreClock = PLL_CLOCK / 1;        // HCLK
-    CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
+    CyclesPerUs     = PLL_CLOCK / 1000000;  // For CLK_SysTickDelay()
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
     /*---------------------------------------------------------------------------------------------------------*/
-    /* Set P3 multi-function pins for UART0 RXD and TXD  */
+    /* Set P3 multi-function pins for UART0 RXD and TXD */
     SYS->P3_MFP &= ~(SYS_MFP_P30_Msk | SYS_MFP_P31_Msk);
     SYS->P3_MFP |= SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0;
     /* Set P2 multi-function pins for PWMA Channel0~3 */
@@ -122,7 +122,6 @@ void UART0_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init UART                                                                                               */
     /*---------------------------------------------------------------------------------------------------------*/
-    //UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_DIV_MODE2(__HXT, 115200);
     UART0->BAUD = UART_BAUD_MODE2 | UART_BAUD_MODE2_DIVIDER(PLL_CLOCK, 115200);
     UART0->LCR = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
 }

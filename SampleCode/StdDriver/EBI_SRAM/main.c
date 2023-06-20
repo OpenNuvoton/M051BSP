@@ -14,7 +14,7 @@
 #define PLL_CLOCK           50000000
 
 
-extern void SRAM_BS616LV4017(void);
+extern int32_t SRAM_BS616LV4017(void);
 
 
 void SYS_Init(void)
@@ -56,7 +56,7 @@ void SYS_Init(void)
     CLK->CLKSEL1 = CLK_CLKSEL1_UART_S_PLL;
 
     /* Update System Core Clock */
-    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
+    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CyclesPerUs automatically. */
     SystemCoreClockUpdate();
 
     /*---------------------------------------------------------------------------------------------------------*/
@@ -134,15 +134,16 @@ int main(void)
     EBI_Open(0, EBI_BUSWIDTH_16BIT, EBI_TIMING_NORMAL, 0, 0);
 
     /* Start SRAM test */
-    SRAM_BS616LV4017();
+    if( SRAM_BS616LV4017() == 0)
+    {
+        printf("*** SRAM Test OK ***\n");
+    }
 
     /* Disable EBI function */
     EBI_Close(0);
 
     /* Disable EBI clock */
     CLK->AHBCLK &= ~CLK_AHBCLK_EBI_EN_Msk;
-
-    printf("*** SRAM Test OK ***\n");
 
     while(1);
 }

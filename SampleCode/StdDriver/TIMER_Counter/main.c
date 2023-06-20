@@ -88,7 +88,7 @@ void SYS_Init(void)
     CLK->CLKSEL1 = CLK_CLKSEL1_UART_S_PLL | CLK_CLKSEL1_TMR1_S_HCLK;
 
     /* Update System Core Clock */
-    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
+    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CyclesPerUs automatically. */
     SystemCoreClockUpdate();
 
     /*---------------------------------------------------------------------------------------------------------*/
@@ -96,8 +96,8 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Set P3 multi-function pins for UART0 RXD, TXD */
     SYS->P3_MFP &= ~(SYS_MFP_P30_Msk | SYS_MFP_P31_Msk);
-    SYS->P3_MFP |=  (SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0);   
-    
+    SYS->P3_MFP |=  (SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0);
+
     /* Set P3 multi-function pins for T1 */
     SYS->P3_MFP &= ~SYS_MFP_P35_Msk;
     SYS->P3_MFP |= SYS_MFP_P35_T1;
@@ -121,6 +121,7 @@ void UART0_Init(void)
 int main(void)
 {
     volatile uint32_t u32InitCount;
+    uint32_t u32TimeOutCnt;
 
     /* Unlock protected registers */
     SYS_UnlockReg();
@@ -172,29 +173,26 @@ int main(void)
     if(TIMER_GetCounter(TIMER1) != 0)
     {
         printf("Default counter value is not 0. (%d)\n", TIMER_GetCounter(TIMER1));
-
-        /* Stop Timer1 counting */
-        TIMER_Close(TIMER1);
-        while(1);
+        goto lexit;
     }
 
     /* To generate one counter event to T1 pin */
     GeneratePORT2Counter(0, 1);
 
     /* To check if TDR of Timer1 must be 1 */
-    while(TIMER_GetCounter(TIMER1) == 0);
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(TIMER_GetCounter(TIMER1) == 0)
+        if(--u32TimeOutCnt == 0) break;
     if(TIMER_GetCounter(TIMER1) != 1)
     {
         printf("Get unexpected counter value. (%d)\n", TIMER_GetCounter(TIMER1));
-
-        /* Stop Timer1 counting */
-        TIMER_Close(TIMER1);
-        while(1);
+        goto lexit;
     }
 
     /* To generate remains counts to T1 pin */
     GeneratePORT2Counter(0, (56789 - 1));
 
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
     while(1)
     {
         if((g_au32TMRINTCount[1] == 1) && (TIMER_GetCounter(TIMER1) == 56789))
@@ -202,7 +200,15 @@ int main(void)
             printf("Timer1 external counter input function ... PASS.\n");
             break;
         }
+
+        if(--u32TimeOutCnt == 0)
+        {
+            printf("Timer1 external counter input function ... FAIL.\n");
+            break;
+        }
     }
+
+lexit:
 
     /* Stop Timer1 counting */
     TIMER_Close(TIMER1);

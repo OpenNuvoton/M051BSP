@@ -1,5 +1,5 @@
 /**************************************************************************//**
- * @file     Smpl_DrvFMC.c
+ * @file     main.c
  * @version  V2.00
  * $Revision: 5 $
  * $Date: 15/08/07 1:17p $
@@ -18,6 +18,8 @@
 #if !defined(__ICCARM__)
 extern uint32_t Image$$RO$$Base;
 #endif
+
+int32_t g_FMC_i32ErrCode;
 
 void SYS_Init(void)
 {
@@ -54,7 +56,7 @@ void SYS_Init(void)
     //SystemCoreClockUpdate();
     PllClock        = PLL_CLOCK;            // PLL
     SystemCoreClock = PLL_CLOCK / 1;        // HCLK
-    CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
+    CyclesPerUs     = PLL_CLOCK / 1000000;  // For CLK_SysTickDelay()
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
@@ -128,9 +130,9 @@ int32_t main(void)
     if((u32PDID == 0x10005000) | (u32PDID == 0x20005000))
     {
         printf("Warning: This chip does not support H/W multi-boot.\n");
-        while(1);
+         goto lexit;
     }   
-    
+
 #if defined(__ICCARM__)
     printf("VECMAP = 0x%x\n", FMC_GetVECMAP());
 #else

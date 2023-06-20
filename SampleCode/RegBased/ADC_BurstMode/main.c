@@ -67,7 +67,7 @@ void SYS_Init(void)
     //SystemCoreClockUpdate();
     PllClock        = PLL_CLOCK;            // PLL
     SystemCoreClock = PLL_CLOCK / 1;        // HCLK
-    CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
+    CyclesPerUs     = PLL_CLOCK / 1000000;  // For CLK_SysTickDelay()
 
     /* Enable UART module clock */
     CLK->APBCLK |= CLK_APBCLK_UART0_EN_Msk;
@@ -161,6 +161,7 @@ void AdcBurstModeTest()
 {
     uint8_t  u8Option;
     uint32_t u32Count;
+    uint32_t u32TimeOutCnt;
 
     printf("\n\nConversion rate: %d samples/second\n", ADC_GetConversionRate());
     printf("\n");
@@ -195,7 +196,15 @@ void AdcBurstModeTest()
             g_u32AdcDataCount = 0;
             ADC->ADCR |= ADC_ADCR_ADST_Msk;
 
-            while(g_u32AdcDataCount < BURST_COUNT);
+            u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+            while(g_u32AdcDataCount < BURST_COUNT)
+            {
+                if(--u32TimeOutCnt == 0)
+                {
+                    printf("Wait for ADC conversion done time-out!\n");
+                    return;
+                }
+            }
 
             /* Stop A/D conversion */
             ADC->ADCR &= ~ADC_ADCR_ADST_Msk;
@@ -222,7 +231,15 @@ void AdcBurstModeTest()
             g_u32AdcDataCount = 0;
             ADC->ADCR |= ADC_ADCR_ADST_Msk;
 
-            while(g_u32AdcDataCount < BURST_COUNT);
+            u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+            while(g_u32AdcDataCount < BURST_COUNT)
+            {
+                if(--u32TimeOutCnt == 0)
+                {
+                    printf("Wait for ADC conversion done time-out!\n");
+                    return;
+                }
+            }
 
             /* Stop A/D conversion */
             ADC->ADCR &= ~ADC_ADCR_ADST_Msk;

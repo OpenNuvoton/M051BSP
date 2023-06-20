@@ -16,6 +16,7 @@
 #define PAGE_SIZE       FMC_FLASH_PAGE_SIZE
 
 volatile uint8_t g_u8IsPress = FALSE;
+int32_t g_FMC_i32ErrCode = 0;
 
 #ifndef LDROM
 extern uint32_t g_u32LoaderImageBase;
@@ -72,11 +73,11 @@ void SYS_Init(void)
     CLK->CLKSEL1 = CLK_CLKSEL1_UART_S_PLL;
 
     /* Update System Core Clock */
-    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
+    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CyclesPerUs automatically. */
     //SystemCoreClockUpdate();
     PllClock        = PLL_CLOCK;            // PLL
     SystemCoreClock = PLL_CLOCK / 1;        // HCLK
-    CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
+    CyclesPerUs     = PLL_CLOCK / 1000000;  // For CLK_SysTickDelay()
 
 
     /*---------------------------------------------------------------------------------------------------------*/

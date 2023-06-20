@@ -26,10 +26,14 @@ volatile uint8_t g_u8IsWDTWakeupINT = 0;
 /*---------------------------------------------------------------------------------------------------------*/
 void PowerDownFunction(void)
 {
+    uint32_t u32TimeOutCnt;
+
     printf("System enter to power-down mode.\n\n");
 
     /* To check if all the debug messages are finished */
-    while(IsDebugFifoEmpty() == 0);
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(IsDebugFifoEmpty() == 0)
+        if(--u32TimeOutCnt == 0) break;
 
     SCB->SCR = 4;
 
@@ -100,7 +104,7 @@ void SYS_Init(void)
     CLK->CLKSEL1 = CLK_CLKSEL1_UART_S_PLL | CLK_CLKSEL1_WDT_S_LIRC;
 
     /* Update System Core Clock */
-    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
+    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CyclesPerUs automatically. */
     SystemCoreClockUpdate();
 
     /*---------------------------------------------------------------------------------------------------------*/
@@ -128,6 +132,8 @@ void UART0_Init(void)
 /*---------------------------------------------------------------------------------------------------------*/
 int main(void)
 {
+    uint32_t u32TimeOutCnt;
+
     /* Unlock protected registers */
     SYS_UnlockReg();
 
@@ -147,7 +153,7 @@ int main(void)
 
     printf("# WDT Settings:\n");
     printf("  Clock source is 10 kHz; Enable interrupt; Enable Wake-up; Time-out interval is 2^16 * WDT clock.\n");
-    printf("# When WDT statr counting, system will generate a WDT time-out interrupt after 6.5536 ~ 6.656 s.\n");
+    printf("# When WDT start counting, system will generate a WDT time-out interrupt after 6.5536 ~ 6.656 s.\n");
     printf("  Measure P0.0 low period to check time-out interval and system can be waken-up by WDT time-out event.\n\n");
 
     /* Use P0.0 to check time-out period time */
@@ -173,10 +179,17 @@ int main(void)
     PowerDownFunction();
 
     /* Check if WDT time-out interrupt and wake-up interrupt flag occurred */
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
     while(1)
     {
         if(((CLK->PWRCON & CLK_PWRCON_PD_WU_STS_Msk) == CLK_PWRCON_PD_WU_STS_Msk) && (g_u8IsWDTWakeupINT == 1))
             break;
+
+        if(--u32TimeOutCnt == 0)
+        {
+            printf("Wait for System or WDT interrupt time-out!\n");
+            break;
+        }
     }
 
     P00 = 1;

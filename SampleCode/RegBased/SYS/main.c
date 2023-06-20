@@ -136,9 +136,10 @@ uint32_t g_au32PllSetting[] =
 void SYS_PLL_Test(void)
 {
     int32_t  i;
+    uint32_t u32TimeOutCnt;
 
     /*---------------------------------------------------------------------------------------------------------*/
-    /* PLL clock configuration test                                                                             */
+    /* PLL clock configuration test                                                                            */
     /*---------------------------------------------------------------------------------------------------------*/
 
     PutString("\n-------------------------[ Test PLL ]-----------------------------\n");
@@ -156,7 +157,15 @@ void SYS_PLL_Test(void)
         CLK->PLLCON = g_au32PllSetting[i];
 
         /* Waiting for PLL clock ready */
-        while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
+        u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+        while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk))
+        {
+            if(--u32TimeOutCnt == 0)
+            {
+                printf("Wait for PLL stable time-out!\n");
+                return;
+            }
+        }
 
         /* Switch HCLK clock source to PLL */
         CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_PLL;
@@ -206,12 +215,12 @@ void SYS_Init(void)
     while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk));
 
     /* Switch HCLK clock source to Internal RC and HCLK source divide 1 */
-    CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_HIRC ;
+    CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_HIRC;
     CLK->CLKDIV = (CLK->CLKDIV & (~CLK_CLKDIV_HCLK_N_Msk)) | CLK_CLKDIV_HCLK(1);
 
     /* Set PLL to Power down mode and HW will also clear PLL_STB bit in CLKSTATUS register */
-    CLK->PLLCON |= CLK_PLLCON_PD_Msk;  
-    
+    CLK->PLLCON |= CLK_PLLCON_PD_Msk;
+
     /* Enable external XTAL 12MHz clock */
     CLK->PWRCON |= CLK_PWRCON_XTL12M_EN_Msk;
 
@@ -246,7 +255,7 @@ void SYS_Init(void)
 
 }
 
-void UART0_Init()
+void UART0_Init(void)
 {
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init UART                                                                                               */
@@ -265,7 +274,7 @@ void UART0_Init()
 /*---------------------------------------------------------------------------------------------------------*/
 int32_t main(void)
 {
-    uint32_t u32data;
+    uint32_t u32data, u32TimeOutCnt;
 
     /* If define INIT_SYSCLK_AT_BOOTING in system_M051Series.h, HCLK will be set to 50MHz in SystemInit(void). */
     /* In end of main function, program issued CPU reset and write-protection will be disabled. */
@@ -348,7 +357,9 @@ int32_t main(void)
     PutString("\n\n  >>> Reset CPU <<<\n");
 
     /* Waiting for message send out */
-    while(!(UART0->FSR & UART_FSR_TE_FLAG_Msk));
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(!(UART0->FSR & UART_FSR_TE_FLAG_Msk))
+        if(--u32TimeOutCnt == 0) break;
 
     /* Switch HCLK clock source to Internal RC and HCLK source divide 1 */
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_HIRC;

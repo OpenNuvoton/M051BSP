@@ -15,7 +15,6 @@
 #define PLLCON_SETTING  CLK_PLLCON_50MHz_HXT
 #define PLL_CLOCK       50000000
 
-#define PLL_CLOCK           50000000
 # if defined ( __GNUC__ )
 #define RXBUFSIZE 128
 #else
@@ -51,14 +50,14 @@ void SYS_Init(void)
 
     /* Waiting for Internal RC clock ready */
     while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk));
-    
+
     /* Switch HCLK clock source to Internal RC and HCLK source divide 1 */
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_HIRC;
     CLK->CLKDIV = (CLK->CLKDIV & (~CLK_CLKDIV_HCLK_N_Msk)) | CLK_CLKDIV_HCLK(1);
 
     /* Set PLL to Power down mode and HW will also clear PLL_STB bit in CLKSTATUS register */
-    CLK->PLLCON |= CLK_PLLCON_PD_Msk;        
-    
+    CLK->PLLCON |= CLK_PLLCON_PD_Msk;
+
     /* Enable external XTAL 12MHz clock */
     CLK->PWRCON |= CLK_PWRCON_XTL12M_EN_Msk;
 
@@ -141,7 +140,7 @@ int32_t main(void)
 
     /* UART sample function */
     UART_FunctionTest();
-    
+
     while(1);
 
 }
@@ -162,6 +161,7 @@ void UART_TEST_HANDLE()
     uint8_t u8InChar = 0xFF;
     uint32_t u32IntSts = UART0->ISR;
 
+    /* Receive Data Available Interrupt Handle */
     if(u32IntSts & UART_ISR_RDA_INT_Msk)
     {
         printf("\nInput:");
@@ -191,6 +191,7 @@ void UART_TEST_HANDLE()
         printf("\nTransmission Test:");
     }
 
+    /* Transmit Holding Register Empty Interrupt Handle */
     if(u32IntSts & UART_ISR_THRE_INT_Msk)
     {
         uint16_t tmp;
@@ -198,7 +199,7 @@ void UART_TEST_HANDLE()
         if(g_u32comRhead != tmp)
         {
             u8InChar = g_u8RecData[g_u32comRhead];
-            while(UART_IS_TX_FULL(UART0));  /* Wait Tx is not full to transmit data */            
+            while(UART_IS_TX_FULL(UART0));  /* Wait Tx is not full to transmit data */
             UART_WRITE(UART0, u8InChar);
             g_u32comRhead = (g_u32comRhead == (RXBUFSIZE - 1)) ? 0 : (g_u32comRhead + 1);
             g_u32comRbytes--;
@@ -222,11 +223,11 @@ void UART_FunctionTest()
     /*
         Using a RS232 cable to connect UART0 and PC.
         UART0 is set to debug port. UART0 is enable RDA and RLS interrupt.
-        When inputing char to terminal screen, RDA interrupt will happen and
+        When inputting char to terminal screen, RDA interrupt will happen and
         UART0 will print the received char on screen.
     */
 
-    /* Enable Interrupt and install the call back function */
+    /* Enable Interrupt */
     UART0->IER |= UART_IER_RDA_IEN_Msk | UART_IER_THRE_IEN_Msk | UART_IER_RTO_IEN_Msk ;
     NVIC_EnableIRQ(UART0_IRQn);
     while(g_bWait);

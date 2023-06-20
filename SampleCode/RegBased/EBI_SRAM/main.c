@@ -14,7 +14,7 @@
 #define PLL_CLOCK           50000000
 
 
-extern void SRAM_BS616LV4017(void);
+extern int32_t SRAM_BS616LV4017(void);
 
 
 void SYS_Init(void)
@@ -141,15 +141,16 @@ int main(void)
     EBI->EXTIME = 0x03003318;
 
     /* Start SRAM test */
-    SRAM_BS616LV4017();
+    if( SRAM_BS616LV4017() == 0)
+    {
+        printf("*** SRAM Test OK ***\n");
+    }
 
     /* Disable EBI function */
     EBI->EBICON &= ~EBI_EBICON_ExtEN_Msk;
 
     /* Disable EBI clock */
     CLK->AHBCLK &= ~CLK_AHBCLK_EBI_EN_Msk;
-
-    printf("*** SRAM Test OK ***\n");
 
     while(1);
 }

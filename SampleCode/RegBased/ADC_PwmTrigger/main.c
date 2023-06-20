@@ -57,7 +57,7 @@ void SYS_Init(void)
     //SystemCoreClockUpdate();
     PllClock        = PLL_CLOCK;            // PLL
     SystemCoreClock = PLL_CLOCK / 1;        // HCLK
-    CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
+    CyclesPerUs     = PLL_CLOCK / 1000000;  // For CLK_SysTickDelay()
 
     /* Enable UART module clock */
     CLK->APBCLK |= CLK_APBCLK_UART0_EN_Msk;
@@ -121,7 +121,7 @@ void UART0_Init()
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
-/* Function: ADC_PWMTrigTest_SingleOpMode                                                                             */
+/* Function: ADC_PWMTrigTest_SingleOpMode                                                                  */
 /*                                                                                                         */
 /* Parameters:                                                                                             */
 /*   None.                                                                                                 */
@@ -130,10 +130,12 @@ void UART0_Init()
 /*   None.                                                                                                 */
 /*                                                                                                         */
 /* Description:                                                                                            */
-/*   ADC hardware trigger test.                                                                                 */
+/*   ADC hardware trigger test.                                                                            */
 /*---------------------------------------------------------------------------------------------------------*/
 void ADC_PWMTrigTest_SingleOpMode()
 {
+    uint32_t u32TimeOutCnt;
+
     printf("\n<<< PWM trigger test (Single mode) >>>\n");
 
     /* PWM trigger; ADC single operation mode; single-end input; enable the ADC converter. */
@@ -164,7 +166,16 @@ void ADC_PWMTrigTest_SingleOpMode()
     PWMA->PCR |= PWM_PCR_CH0EN_Msk;
 
     /* Wait conversion done */
-    while(!((ADC->ADSR & ADC_ADSR_ADF_Msk) >> ADC_ADSR_ADF_Pos));
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(!((ADC->ADSR & ADC_ADSR_ADF_Msk) >> ADC_ADSR_ADF_Pos))
+    {
+        if(--u32TimeOutCnt == 0)
+        {
+            printf("Wait for ADC conversion done time-out!\n");
+            return;
+        }
+    }
+
     /* Clear the ADC interrupt flag */
     ADC->ADSR = ADC_ADSR_ADF_Msk;
 

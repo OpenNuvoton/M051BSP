@@ -1,5 +1,5 @@
 /**************************************************************************//**
- * @file     Smpl_DrvFMC_SimpleLD.c
+ * @file     main_LD.c
  * @version  V2.00
  * $Revision: 2 $
  * $Date: 14/01/28 11:43a $
@@ -96,12 +96,12 @@ void SYS_Init(void)
     //SystemCoreClockUpdate();
     PllClock        = PLL_CLOCK;            // PLL
     SystemCoreClock = PLL_CLOCK / 1;        // HCLK
-    CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
+    CyclesPerUs     = PLL_CLOCK / 1000000;  // For CLK_SysTickDelay()
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
     /*---------------------------------------------------------------------------------------------------------*/
-    /* Set P3 multi-function pins for UART0 RXD and TXD  */
+    /* Set P3 multi-function pins for UART0 RXD and TXD */
     SYS->P3_MFP &= ~(SYS_MFP_P30_Msk | SYS_MFP_P31_Msk);
     SYS->P3_MFP |= (SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0);
 
@@ -137,7 +137,7 @@ int32_t IAP_Func0(int32_t n)
     }
 
     return n;
-#endif    
+#endif
 }
 
 int32_t IAP_Func1(int32_t n)
@@ -153,7 +153,7 @@ int32_t IAP_Func1(int32_t n)
     }
 
     return n;
-#endif    
+#endif
 }
 int32_t IAP_Func2(int32_t n)
 {
@@ -168,7 +168,7 @@ int32_t IAP_Func2(int32_t n)
     }
 
     return n;
-#endif    
+#endif
 }
 int32_t IAP_Func3(int32_t n)
 {
@@ -183,7 +183,7 @@ int32_t IAP_Func3(int32_t n)
     }
 
     return n;
-#endif    
+#endif
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
@@ -195,12 +195,12 @@ int32_t main(void)
 
     /* Unlock protected registers for ISP function */
     SYS_UnlockReg();
-    
+
     /* Init System, IP clock and multi-function I/O */
     SYS_Init();
 
 #if defined(__GNUC_LD_IAP__)
-        
+
     // Delay 3 seconds
     for(i = 0; i < 30; i++)
     {
@@ -209,7 +209,7 @@ int32_t main(void)
 
     while(SYS->PDID)__WFI();
 #else
-    
+
     /* Init UART0 for printf */
     UART0_Init();
 
@@ -236,7 +236,7 @@ int32_t main(void)
     printf("Function table @ 0x%08x\n", g_funcTable);
 
     while(SYS->PDID)__WFI();
-#endif    
+#endif
 }
 
 

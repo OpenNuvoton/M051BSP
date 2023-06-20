@@ -2,7 +2,7 @@
  * @file     uart_transfer.h
  * @brief    General UART ISP slave header file
  * @version  V1.00
-
+ *
  * @note
  * Copyright (C) 2019 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
@@ -16,7 +16,7 @@
 
 /*-------------------------------------------------------------*/
 
-extern uint8_t  uart_rcvbuf[];
+extern uint8_t uart_rcvbuf[];
 extern uint8_t volatile bUartDataReady;
 extern uint8_t volatile bufhead;
 

@@ -105,6 +105,7 @@ void AdcSingleCycleScanModeTest()
     uint8_t  u8Option;
     uint32_t u32ChannelCount;
     int32_t  i32ConversionData;
+    uint32_t u32TimeOutCnt;
 
     printf("\n");
     printf("+----------------------------------------------------------------------+\n");
@@ -134,7 +135,15 @@ void AdcSingleCycleScanModeTest()
             ADC_START_CONV(ADC);
 
             /* Wait conversion done */
-            while(!ADC_GET_INT_FLAG(ADC, ADC_ADF_INT));
+            u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+            while(!ADC_GET_INT_FLAG(ADC, ADC_ADF_INT))
+            {
+                if(--u32TimeOutCnt == 0)
+                {
+                    printf("Wait for ADC conversion done time-out!\n");
+                    return;
+                }
+            }
 
             for(u32ChannelCount = 0; u32ChannelCount < 4; u32ChannelCount++)
             {
@@ -158,7 +167,15 @@ void AdcSingleCycleScanModeTest()
             ADC_START_CONV(ADC);
 
             /* Wait conversion done */
-            while(!ADC_GET_INT_FLAG(ADC, ADC_ADF_INT));
+            u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+            while(!ADC_GET_INT_FLAG(ADC, ADC_ADF_INT))
+            {
+                if(--u32TimeOutCnt == 0)
+                {
+                    printf("Wait for ADC conversion done time-out!\n");
+                    return;
+                }
+            }
 
             for(u32ChannelCount = 0; u32ChannelCount < 2; u32ChannelCount++)
             {

@@ -20,7 +20,7 @@ extern uint32_t Image$$RO$$Base;
 #endif
 
 typedef void (FUNC_PTR)(void);
-
+int32_t g_FMC_i32ErrCode;
 
 void SYS_Init(void)
 {
@@ -57,7 +57,7 @@ void SYS_Init(void)
     //SystemCoreClockUpdate();
     PllClock        = PLL_CLOCK;            // PLL
     SystemCoreClock = PLL_CLOCK / 1;        // HCLK
-    CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
+    CyclesPerUs     = PLL_CLOCK / 1000000;  // For CLK_SysTickDelay()
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
@@ -85,10 +85,10 @@ void UART0_Init(void)
 /*  Main Function                                                                                          */
 /*---------------------------------------------------------------------------------------------------------*/
 int32_t main(void)
-{      
-    volatile uint32_t u32BootAddr; 
+{
+    volatile uint32_t u32BootAddr;
     FUNC_PTR    *ResetFunc;
-    
+
     uint8_t ch;
     uint32_t u32Data;
     uint32_t u32Cfg;
@@ -107,7 +107,7 @@ int32_t main(void)
 
     /*
         This sample code shows how to boot with different firmware images in APROM by software reset method.
-        In the code, VECMAP and functional pointer are used to implement multi-boot function. 
+        In the code, VECMAP and functional pointer are used to implement multi-boot function.
         Software set VECMAP to remap page of VECMAP to 0x0~0x1ff then set the main stack and jump to new boot.
         NOTE: VECMAP only valid when CBS = 00'b or 10'b.
 
@@ -206,24 +206,24 @@ int32_t main(void)
             u32BootAddr = 0x0000;
             break;
     }
-     
+
     /* Disable all interrupts before change VECMAP */
-    NVIC->ICER[0] = 0xFFFFFFFF;  
-   
+    NVIC->ICER[0] = 0xFFFFFFFF;
+
     /* Set vector table of startup AP address */
-    FMC_SetVectorPageAddr(u32BootAddr);  
+    FMC_SetVectorPageAddr(u32BootAddr);
     if(FMC_GetVECMAP() != u32BootAddr)
     {
         printf("\nERROR: VECMAP isn't supported in current chip.\n");
-        while(1);
+        goto lexit;
     }
 
     /* Reset All IP before boot to new AP */
     SYS->IPRSTC2 = 0xFFFFFFFF;
     SYS->IPRSTC2 = 0;
-    
+
     /* Obtain Reset Handler address of new boot. */
-    ResetFunc = (FUNC_PTR *)M32(4);  
+    ResetFunc = (FUNC_PTR *)M32(4);
 
 #if defined(__GNUC__)
     /* Set Main Stack Pointer register of new boot */
@@ -232,10 +232,10 @@ int32_t main(void)
 #else
     /* Set Main Stack Pointer register of new boot */
     __set_MSP(M32(0));
-#endif    
-    
+#endif
+
     /* Call reset handler of new boot */
-    ResetFunc();       
+    ResetFunc();
 
     while(1);
 

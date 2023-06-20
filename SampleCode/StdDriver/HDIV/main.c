@@ -3,7 +3,7 @@
  * @version  V2.10
  * $Revision: 3 $
  * $Date: 14/01/28 11:44a $
- * @brief    M051 Series Timer Controller and Watchdog Timer Driver Sample Code
+ * @brief    M051 Series Divider Sample Code
  *
  * @note
  * Copyright (C) 2011 Nuvoton Technology Corp. All rights reserved.
@@ -12,8 +12,7 @@
 #include <stdio.h>
 #include "M051Series.h"
 
-#define PLLCON_SETTING      CLK_PLLCON_50MHz_XTAL
-#define PLL_CLOCK           50000000
+
 
 void SYS_Init(void)
 {
@@ -34,7 +33,7 @@ void SYS_Init(void)
     CLK->CLKSEL1 &= ~CLK_CLKSEL1_UART_S_Msk;
     CLK->CLKSEL1 |= (0x0 << CLK_CLKSEL1_UART_S_Pos);// Clock source from external 12 MHz
 
-    /* Set P30(RXD0),P31(TXD0) multi-function pins for UART0 RXD and TXD  */
+    /* Set P30(RXD0), P31(TXD0) multi-function pins for UART0 RXD and TXD */
     SYS->P3_MFP &= ~(SYS_MFP_P30_Msk | SYS_MFP_P31_Msk);
     SYS->P3_MFP |= (SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0);
 

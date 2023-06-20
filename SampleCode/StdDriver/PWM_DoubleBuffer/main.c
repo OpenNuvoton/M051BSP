@@ -16,7 +16,6 @@
 /* Macro, type and constant definitions                                                                    */
 /*---------------------------------------------------------------------------------------------------------*/
 
-#define PLLCON_SETTING      CLK_PLLCON_50MHz_HXT
 #define PLL_CLOCK           50000000
 
 
@@ -72,7 +71,7 @@ void SYS_Init(void)
     CLK_EnableXtalRC(CLK_PWRCON_XTL12M_EN_Msk | CLK_PWRCON_OSC22M_EN_Msk);
 
     /* Enable PLL and Set PLL frequency */
-    CLK_SetCoreClock(PLLCON_SETTING);
+    CLK_SetCoreClock(PLL_CLOCK);
 
     /* Waiting for clock ready */
     CLK_WaitClockReady(CLK_CLKSTATUS_PLL_STB_Msk | CLK_CLKSTATUS_XTL12M_STB_Msk | CLK_CLKSTATUS_OSC22M_STB_Msk);
@@ -98,16 +97,16 @@ void SYS_Init(void)
     SYS_ResetModule(PWM03_RST);
 
     /* Update System Core Clock */
-    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CycylesPerUs automatically. */
+    /* User can use SystemCoreClockUpdate() to calculate PllClock, SystemCoreClock and CyclesPerUs automatically. */
     //SystemCoreClockUpdate();
     PllClock        = PLL_CLOCK;            // PLL
     SystemCoreClock = PLL_CLOCK / 1;        // HCLK
-    CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
+    CyclesPerUs     = PLL_CLOCK / 1000000;  // For CLK_SysTickDelay()
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
     /*---------------------------------------------------------------------------------------------------------*/
-    /* Set P3 multi-function pins for UART0 RXD and TXD  */
+    /* Set P3 multi-function pins for UART0 RXD and TXD */
     SYS->P3_MFP &= ~(SYS_MFP_P30_Msk | SYS_MFP_P31_Msk);
     SYS->P3_MFP |= SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0;
     /* Set P2 multi-function pins for PWMA Channel0~3 */

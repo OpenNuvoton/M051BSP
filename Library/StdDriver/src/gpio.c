@@ -30,7 +30,11 @@
  *
  * @param[in]   port        GPIO port. It could be P0, P1, P2, P3 or P4.
  * @param[in]   u32PinMask  The single or multiple pins of specified GPIO port. It could be BIT0 ~ BIT7.
- * @param[in]   u32Mode     Operation mode. GPIO_PMD_INPUT, GPIO_PMD_OUTPUT, GPIO_PMD_OPEN_DRAIN, GPIO_PMD_QUASI
+ * @param[in]   u32Mode     Operation mode. It could be \n
+ *                          - \ref GPIO_PMD_INPUT
+ *                          - \ref GPIO_PMD_OUTPUT
+ *                          - \ref GPIO_PMD_OPEN_DRAIN
+ *                          - \ref GPIO_PMD_QUASI
  *
  * @return      None
  *
@@ -55,7 +59,11 @@ void GPIO_SetMode(GPIO_T *port, uint32_t u32PinMask, uint32_t u32Mode)
  * @param[in]   port            GPIO port. It could be P0, P1, P2, P3 or P4.
  * @param[in]   u32Pin          The pin of specified GPIO port. It could be 0 ~ 7.
  * @param[in]   u32IntAttribs   The interrupt attribute of specified GPIO pin. It could be \n
- *                              GPIO_INT_RISING, GPIO_INT_FALLING, GPIO_INT_BOTH_EDGE, GPIO_INT_HIGH, GPIO_INT_LOW.
+ *                              - \ref GPIO_INT_RISING
+ *                              - \ref GPIO_INT_FALLING
+ *                              - \ref GPIO_INT_BOTH_EDGE
+ *                              - \ref GPIO_INT_HIGH
+ *                              - \ref GPIO_INT_LOW
  *
  * @return      None
  *

@@ -69,7 +69,7 @@ void UART0_Init(void)
 /*---------------------------------------------------------------------------------------------------------*/
 /* MAIN function                                                                                           */
 /*---------------------------------------------------------------------------------------------------------*/
-int main(void)
+int32_t main(void)
 {
     int32_t i32Err;
 
@@ -90,6 +90,13 @@ int main(void)
     printf("|    P1.2(Output) and P4.1(Input) Sample Code     |\n");
     printf("+-------------------------------------------------+\n\n");
 
+    /*-----------------------------------------------------------------------------------------------------*/
+    /* GPIO Basic Mode Test --- Use Pin Data Input/Output to control GPIO pin                              */
+    /*-----------------------------------------------------------------------------------------------------*/
+    printf("  >> Please connect P1.2 and P4.1 first << \n");
+    printf("     Press any key to start test by using [Pin Data Input/Output Control] \n\n");
+    getchar();
+
     /* Configure P1.2 as Output mode and P4.1 as Input mode */
     GPIO_SetMode(P1, BIT2, GPIO_PMD_OUTPUT);
     GPIO_SetMode(P4, BIT1, GPIO_PMD_INPUT);
@@ -98,12 +105,14 @@ int main(void)
     printf("GPIO P1.2(output mode) connect to P4.1(input mode) ......");
 
     /* Use Pin Data Input/Output Control to pull specified I/O or get I/O pin status */
+    /* Pull P1.2 to Low and check P4.1 status */
     P12 = 0;
     if(P41 != 0)
     {
         i32Err = 1;
     }
 
+    /* Pull P1.2 to High and check P4.1 status */
     P12 = 1;
     if(P41 != 1)
     {

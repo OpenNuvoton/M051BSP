@@ -134,9 +134,9 @@ void SYS_Init(void)
     //SystemCoreClockUpdate();
     PllClock        = PLL_CLOCK;            // PLL
     SystemCoreClock = PLL_CLOCK / 1;        // HCLK
-    CyclesPerUs     = PLL_CLOCK / 1000000;  // For SYS_SysTickDelay()
+    CyclesPerUs     = PLL_CLOCK / 1000000;  // For CLK_SysTickDelay()
 
-    /* Enable UART module clock */
+    /* Enable UART and I2C module clock */
     CLK->APBCLK |= CLK_APBCLK_UART0_EN_Msk | CLK_APBCLK_I2C0_EN_Msk;
 
     /* Select UART module clock source */
@@ -279,11 +279,13 @@ int32_t main(void)
         if(g_au8SlvData[i] != g_au8SlvTxData[2])
         {
             printf("GC Mode Receive data fail.\n");
-            while(1);
+            goto lexit;
         }
     }
 
     printf("GC Mode receive data OK.\n");
+
+lexit:
 
     s_I2C0HandlerFn = NULL;
 

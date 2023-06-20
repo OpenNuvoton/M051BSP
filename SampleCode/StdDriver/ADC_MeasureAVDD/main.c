@@ -150,7 +150,7 @@ uint32_t GetAVDDVoltage(void)
 /*---------------------------------------------------------------------------------------------------------*/
 uint32_t GetAVDDCodeByADC(void)
 {
-    uint32_t u32Count, u32Sum, u32Data;
+    uint32_t u32Count, u32Sum, u32Data, u32TimeOutCnt;
 
     /* Power on ADC */
     ADC_POWER_ON(ADC);
@@ -180,9 +180,19 @@ uint32_t GetAVDDCodeByADC(void)
         ADC_START_CONV(ADC);
 
         u32Data = 0;
+
         /* Wait conversion done */
-        while(g_u8ADF == 0);
+        u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+        while(g_u8ADF == 0)
+        {
+            if(--u32TimeOutCnt == 0)
+            {
+                printf("Wait for ADC conversion done time-out!\n");
+                return 0;
+            }
+        }
         g_u8ADF = 0;
+
         /* Get the conversion result */
         u32Data = ADC_GET_CONVERSION_DATA(ADC, 7);
         /* Sum each conversion data */

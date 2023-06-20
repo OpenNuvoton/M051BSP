@@ -65,7 +65,7 @@ int32_t main(void)
     /* Enable ACMP01 interrupt */
     NVIC_EnableIRQ(ACMP01_IRQn);
 
-    /* To program PWRCTL register, it needs to disable register protection first. */
+    /* To program PWRCON register, it needs to disable register protection first. */
     SYS_UnlockReg();
     PowerDownFunction();
     printf("Wake up by ACMP0!\n");
@@ -132,15 +132,19 @@ void UART_Init(void)
 
 void PowerDownFunction(void)
 {
+    uint32_t u32TimeOutCnt;
+
     printf("\nSystem enter power-down mode ... ");
 
     /* To check if all the debug messages are finished */
-    while(IsDebugFifoEmpty() == 0);
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    while(IsDebugFifoEmpty() == 0)
+        if(--u32TimeOutCnt == 0) break;
 
     /* Deep sleep mode is selected */
     SCB->SCR = SCB_SCR_SLEEPDEEP_Msk;
 
-    /* To program PWRCTL register, it needs to disable register protection first. */
+    /* To program PWRCON register, it needs to disable register protection first. */
     CLK->PWRCON &= ~(CLK_PWRCON_PD_WAIT_CPU_Msk | CLK_PWRCON_PWR_DOWN_EN_Msk);
     CLK->PWRCON |= (CLK_PWRCON_PD_WAIT_CPU_Msk | CLK_PWRCON_PWR_DOWN_EN_Msk | CLK_PWRCON_PD_WU_INT_EN_Msk);
 

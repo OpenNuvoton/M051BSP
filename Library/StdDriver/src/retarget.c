@@ -186,7 +186,7 @@ void SP_Read_Ready(void)
         "ADDS    R1, #4        \n"        //; Skip BKPT and next line
         "STR     R1, [R0, #24] \n"        //; Save previous PC
         "BX      lr            \n"        //; Return
-        "DCD     0xBEAB        \n"        //; BKPT instruction code
+        "BKPT    0xAB          \n"        //; BKPT instruction code
         "B       HardFault_Handler_Ret \n"
        );
 }
@@ -219,7 +219,7 @@ void SP_is_PSP(void)
 void HardFault_Handler (void)
 {
     asm("MOV     R0, lr        \n"
-        "LSLS    R0, #29       \n"        //; Check bit 2
+        "LSLS    R0, R0, #29   \n"        //; Check bit 2
         "BMI     SP_is_PSP     \n"        //; previous stack is PSP
         "MRS     R0, MSP       \n"        //; previous stack is MSP, read MSP
         "B       SP_Read_Ready \n"

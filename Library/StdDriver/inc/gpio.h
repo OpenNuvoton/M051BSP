@@ -219,7 +219,7 @@ extern "C"
  *
  * @details     Disable I/O DOUT mask of specified GPIO pin.
  */
-#define GPIO_DISABLE_DOUT_MASK(port, u32PinMask)    ((port)->DMASK &= ~(u32PinMask))    
+#define GPIO_DISABLE_DOUT_MASK(port, u32PinMask)    ((port)->DMASK &= ~(u32PinMask))
 
 /**
  * @brief       Enable I/O DOUT mask
@@ -251,29 +251,31 @@ extern "C"
 /**
  * @brief       Set De-bounce Sampling Cycle Time
  *
- * @param[in]   u32ClkSrc   The de-bounce counter clock source. It could be GPIO_DBCLKSRC_HCLK or GPIO_DBCLKSRC_LIRC.
- * @param[in]   u32ClkSel   The de-bounce sampling cycle selection. It could be 
- *                            - \ref GPIO_DBCLKSEL_1
- *                            - \ref GPIO_DBCLKSEL_2
- *                            - \ref GPIO_DBCLKSEL_4
- *                            - \ref GPIO_DBCLKSEL_8
- *                            - \ref GPIO_DBCLKSEL_16 
- *                            - \ref GPIO_DBCLKSEL_32 
- *                            - \ref GPIO_DBCLKSEL_64 
- *                            - \ref GPIO_DBCLKSEL_128 
- *                            - \ref GPIO_DBCLKSEL_256 
- *                            - \ref GPIO_DBCLKSEL_512 
- *                            - \ref GPIO_DBCLKSEL_1024 
- *                            - \ref GPIO_DBCLKSEL_2048 
- *                            - \ref GPIO_DBCLKSEL_4096 
- *                            - \ref GPIO_DBCLKSEL_8192 
- *                            - \ref GPIO_DBCLKSEL_16384 
- *                            - \ref GPIO_DBCLKSEL_32768
+ * @param[in]   u32ClkSrc   The de-bounce counter clock source. It could be
+ *                          - \ref GPIO_DBCTL_DBCLKSRC_HCLK
+ *                          - \ref GPIO_DBCTL_DBCLKSRC_LIRC
+ * @param[in]   u32ClkSel   The de-bounce sampling cycle selection. It could be
+ *                          - \ref GPIO_DBCLKSEL_1
+ *                          - \ref GPIO_DBCLKSEL_2
+ *                          - \ref GPIO_DBCLKSEL_4
+ *                          - \ref GPIO_DBCLKSEL_8
+ *                          - \ref GPIO_DBCLKSEL_16
+ *                          - \ref GPIO_DBCLKSEL_32
+ *                          - \ref GPIO_DBCLKSEL_64
+ *                          - \ref GPIO_DBCLKSEL_128
+ *                          - \ref GPIO_DBCLKSEL_256
+ *                          - \ref GPIO_DBCLKSEL_512
+ *                          - \ref GPIO_DBCLKSEL_1024
+ *                          - \ref GPIO_DBCLKSEL_2048
+ *                          - \ref GPIO_DBCLKSEL_4096
+ *                          - \ref GPIO_DBCLKSEL_8192
+ *                          - \ref GPIO_DBCLKSEL_16384
+ *                          - \ref GPIO_DBCLKSEL_32768
  *
  * @return      None
  *
  * @details     Set the interrupt de-bounce sampling cycle time based on the debounce counter clock source. \n
- *              Example: _GPIO_SET_DEBOUNCE_TIME(GPIO_DBCLKSRC_LIRC, GPIO_DBCLKSEL_4). \n
+ *              Example: GPIO_SET_DEBOUNCE_TIME(GPIO_DBCLKSRC_LIRC, GPIO_DBCLKSEL_4). \n
  *              It's meaning the De-debounce counter clock source is internal 10 KHz and sampling cycle selection is 4. \n
  *              Then the target de-bounce sampling cycle time is (4)*(1/(10*1000)) s = 4*0.0001 s = 400 us,
  *              and system will sampling interrupt input once per 400 us.
@@ -319,8 +321,12 @@ extern "C"
  *
  * @param[in]   port            GPIO port. It could be P0, P1, P2, P3 or P4.
  * @param[in]   u32Pin          The pin of specified GPIO port. It could be 0 ~ 7.
- * @param[in]   u32IntAttribs   The interrupt attribute of specified GPIO pin. It could be \n
- *                              GPIO_INT_RISING, GPIO_INT_FALLING, GPIO_INT_BOTH_EDGE, GPIO_INT_HIGH, GPIO_INT_LOW.
+ * @param[in]   u32IntAttribs   The interrupt attribute of specified GPIO pin. It could be
+ *                              - \ref GPIO_INT_RISING
+ *                              - \ref GPIO_INT_FALLING
+ *                              - \ref GPIO_INT_BOTH_EDGE
+ *                              - \ref GPIO_INT_HIGH
+ *                              - \ref GPIO_INT_LOW
  *
  * @return      None
  *
@@ -347,8 +353,12 @@ extern "C"
  *
  * @param[in]   port            GPIO port. It could be P0, P1, P2, P3 or P4.
  * @param[in]   u32Pin          The pin of specified GPIO port. It could be 0 ~ 7.
- * @param[in]   u32IntAttribs   The interrupt attribute of specified GPIO pin. It could be \n
- *                              GPIO_INT_RISING, GPIO_INT_FALLING, GPIO_INT_BOTH_EDGE, GPIO_INT_HIGH, GPIO_INT_LOW.
+ * @param[in]   u32IntAttribs   The interrupt attribute of specified GPIO pin. It could be
+ *                              - \ref GPIO_INT_RISING
+ *                              - \ref GPIO_INT_FALLING
+ *                              - \ref GPIO_INT_BOTH_EDGE
+ *                              - \ref GPIO_INT_HIGH
+ *                              - \ref GPIO_INT_LOW
  *
  * @return      None
  *

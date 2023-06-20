@@ -140,7 +140,11 @@ extern "C"
 #define CLK_PLLCON_NO_2          0x4000UL         /*!< For output divider is 2 */
 #define CLK_PLLCON_NO_4          0xC000UL         /*!< For output divider is 4 */
 
+#if (__HXT == 12000000)
 #define CLK_PLLCON_50MHz_HXT     (CLK_PLLCON_PLL_SRC_HXT  | CLK_PLLCON_NR(3)  | CLK_PLLCON_NF( 25) | CLK_PLLCON_NO_2) /*!< Predefined PLLCON setting for 50MHz PLL output with 12MHz X'tal */
+#else
+# error "The PLL pre-definitions are only valid when external crystal is 12MHz"
+#endif
 #define CLK_PLLCON_50MHz_HIRC    (CLK_PLLCON_PLL_SRC_HIRC | CLK_PLLCON_NR(13) | CLK_PLLCON_NF( 59) | CLK_PLLCON_NO_2) /*!< Predefined PLLCON setting for 50.1918MHz PLL output with 22.1184MHz IRC */
 
 
@@ -155,9 +159,9 @@ extern "C"
 #define MODULE_CLKDIV_Msk(x)     (((x) >>10) & 0xff)   /*!< Calculate CLKDIV mask offset on MODULE index */
 #define MODULE_CLKDIV_Pos(x)     (((x) >>5 ) & 0x1f)   /*!< Calculate CLKDIV position offset on MODULE index */
 #define MODULE_IP_EN_Pos(x)      (((x) >>0 ) & 0x1f)   /*!< Calculate APBCLK offset on MODULE index */
-#define MODULE_NoMsk             0x0                 /*!< Not mask on MODULE index */
+#define MODULE_NoMsk             0x0                   /*!< Not mask on MODULE index */
 /*-------------------------------------------------------------------------------------------------------------------------------------------------*/
-/*                     APBCLK(31:30)|CLKSEL(29:28)|CLKSEL_Msk(27:25)|CLKSEL_Pos(24:20)|CLKDIV(19:18)|CLKDIV_Msk(17:10)|CLKDIV_Pos(9:5)|IP_EN_Pos(4:0)*/
+/*                  APBCLK(31:30)|CLKSEL(29:28)|CLKSEL_Msk(27:25)|CLKSEL_Pos(24:20)|CLKDIV(19:18)|CLKDIV_Msk(17:10)|CLKDIV_Pos(9:5)|IP_EN_Pos(4:0) */
 /*-------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 #define ISP_MODULE     ((0UL<<30)          |(MODULE_NoMsk<<25)                   |(MODULE_NoMsk<<10)        |CLK_AHBCLK_ISP_EN_Pos )     /*!< ISP Module */
@@ -195,9 +199,9 @@ extern "C"
 
 /**
   * @brief      Get PLL clock frequency
-  * @param      None     
+  * @param      None
   * @return     PLL frequency
-  * @details    This function get PLL frequency. The frequency unit is Hz.    
+  * @details    This function get PLL frequency. The frequency unit is Hz.
   */
 __STATIC_INLINE uint32_t CLK_GetPLLClockFreq(void)
 {
@@ -246,14 +250,14 @@ __STATIC_INLINE void CLK_SysTickDelay(uint32_t us)
 
     /* Waiting for down-count to zero */
     while((SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk) == 0);
-    
+
     /* Disable SysTick counter */
-    SysTick->CTRL = 0;    
+    SysTick->CTRL = 0;
 }
 
 /**
   * @brief      This function execute long delay function.
-  * @param[in]  us  Delay time. 
+  * @param[in]  us  Delay time.
   * @return     None
   * @details    Use the SysTick to generate the long delay time and the UNIT is in us.
   *             The SysTick clock source is from HCLK, i.e the same as system core clock.
@@ -262,7 +266,7 @@ __STATIC_INLINE void CLK_SysTickDelay(uint32_t us)
 __STATIC_INLINE void CLK_SysTickLongDelay(uint32_t us)
 {
     uint32_t delay;
-        
+
     /* It should <= 335544us for each delay loop */
     delay = 335544UL;
 
@@ -276,8 +280,8 @@ __STATIC_INLINE void CLK_SysTickLongDelay(uint32_t us)
         {
             delay = us;
             us = 0UL;
-        }        
-        
+        }
+
         SysTick->LOAD = delay * CyclesPerUs;
         SysTick->VAL  = (0x0UL);
         SysTick->CTRL = SysTick_CTRL_CLKSOURCE_Msk | SysTick_CTRL_ENABLE_Msk;
@@ -287,9 +291,9 @@ __STATIC_INLINE void CLK_SysTickLongDelay(uint32_t us)
 
         /* Disable SysTick counter */
         SysTick->CTRL = 0UL;
-    
+
     }while(us > 0UL);
-    
+
 }
 
 

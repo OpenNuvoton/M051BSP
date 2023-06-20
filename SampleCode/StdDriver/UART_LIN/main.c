@@ -91,17 +91,17 @@ void LIN_FunctionTest()
         printf("%c\n", u32Item);
         switch(u32Item)
         {
-        case '1':
-            LIN_SendHeader(0x30);
-            break;
-        case '2':
-            LIN_MasterTest(0x35, MODE_CLASSIC);
-            break;
-        case '3':
-            LIN_MasterTest(0x12, MODE_ENHANCED);
-            break;
-        default:
-            break;
+            case '1':
+                LIN_SendHeader(0x30);
+                break;
+            case '2':
+                LIN_MasterTest(0x35, MODE_CLASSIC);
+                break;
+            case '3':
+                LIN_MasterTest(0x12, MODE_ENHANCED);
+                break;
+            default:
+                break;
         }
     }
     while(u32Item != 27);
@@ -118,7 +118,7 @@ void LIN_MasterTest(uint32_t u32id, uint32_t u32ModeSel)
 {
     uint32_t testPattern[8] = {0x1, 0x2, 0x3, 0x4, 0x5, 0x6, 0x7, 0x8};
 
-    /*Send ID=0x35 Header and Response TestPatten*/
+    /* Send ID=0x35 Header and Response TestPatten */
     LIN_SendHeader(u32id);
     LIN_SendResponse(u32ModeSel, &testPattern[0]);
 }
@@ -128,7 +128,7 @@ void LIN_MasterTest(uint32_t u32id, uint32_t u32ModeSel)
 /*---------------------------------------------------------------------------------------------------------*/
 uint8_t GetParityValue(uint32_t u32id)
 {
-    uint32_t u32Res = 0, ID[6], p_Bit[2] , mask = 0;
+    uint32_t u32Res = 0, ID[6], p_Bit[2], mask = 0;
 
     for(mask = 0; mask < 6; mask++)
         ID[mask] = (u32id & (1 << mask)) >> mask;
@@ -161,7 +161,7 @@ uint32_t GetCheckSumValue(uint8_t *pu8Buf, uint32_t u32ModeSel)
 /*---------------------------------------------------------------------------------------------------------*/
 void LIN_SendHeader(uint32_t u32id)
 {
-    g_i32pointer = 0 ;
+    g_i32pointer = 0;
 
     /* Set LIN operation mode, Tx mode and break field length is 12 bits */
     UART_SelectLINMode(UART1, UART_ALT_CSR_LIN_TX_EN_Msk, 11);
@@ -232,7 +232,7 @@ void SYS_Init(void)
 
 }
 
-void UART0_Init()
+void UART0_Init(void)
 {
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init UART                                                                                               */
@@ -244,7 +244,7 @@ void UART0_Init()
     UART_Open(UART0, 115200);
 }
 
-void UART1_Init()
+void UART1_Init(void)
 {
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init UART                                                                                               */
@@ -287,7 +287,7 @@ int32_t main(void)
 
     /* UART sample LIN function */
     LIN_FunctionTest();
-    
+
     while(1);
 
 }

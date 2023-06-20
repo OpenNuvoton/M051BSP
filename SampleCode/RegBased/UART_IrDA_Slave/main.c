@@ -26,7 +26,7 @@ void IrDA_FunctionRxTest(void);
 
 
 /*---------------------------------------------------------------------------------------------------------*/
-/*  IrDA Function Receive Test                                                                            */
+/*  IrDA Function Receive Test                                                                             */
 /*---------------------------------------------------------------------------------------------------------*/
 void IrDA_FunctionRxTest()
 {
@@ -59,8 +59,8 @@ void IrDA_FunctionRxTest()
         UART0 is set to debug port and connect with PC firstly.
         The IrDA sample code needs two module board to execute.
         Set the master board is IrDA TX Mode and the other is IrDA Rx mode.
-        Inputing char on terminal will be sent to the UART0 of master.
-        After the master receiving, the inputing char will send to UART0 again.
+        Inputting char on terminal will be sent to the UART0 of master.
+        After the master receiving, the inputting char will send to UART0 again.
         At the same time, it also sends to UART1 TX pin by IrDA mode.
         Slave will print received char after UART1 send out.
         Note that IrDA mode is ONLY used when baud rate equation is selected mode 0.
@@ -115,11 +115,11 @@ void SYS_Init(void)
 
     /* Switch HCLK clock source to Internal RC and HCLK source divide 1 */
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_HIRC;
-    CLK->CLKDIV = (CLK->CLKDIV  & (~CLK_CLKDIV_HCLK_N_Msk)) | CLK_CLKDIV_HCLK(1);
+    CLK->CLKDIV = (CLK->CLKDIV & (~CLK_CLKDIV_HCLK_N_Msk)) | CLK_CLKDIV_HCLK(1);
 
      /* Set PLL to Power down mode and HW will also clear PLL_STB bit in CLKSTATUS register */
-    CLK->PLLCON |= CLK_PLLCON_PD_Msk;   
-    
+    CLK->PLLCON |= CLK_PLLCON_PD_Msk;
+
     /* Enable external XTAL 12MHz clock */
     CLK->PWRCON |= CLK_PWRCON_XTL12M_EN_Msk;
 
@@ -217,7 +217,7 @@ int32_t main(void)
 
     /* UART sample IrDA Slave function */
     IrDA_FunctionRxTest();
-    
+
     while(1);
 
 }

@@ -12,7 +12,6 @@
 #include <stdio.h>
 #include "M051Series.h"
 
-#define PLLCON_SETTING      SYSCLK_PLLCON_50MHz_XTAL
 #define PLL_CLOCK           50000000
 
 
@@ -235,7 +234,7 @@ void I2C0_Init(void)
 /*---------------------------------------------------------------------------------------------------------*/
 int32_t main(void)
 {
-    uint32_t i;
+    uint32_t i, u32TimeOutCnt;
 
     /* Unlock protected registers */
     SYS_UnlockReg();
@@ -279,7 +278,15 @@ int32_t main(void)
         I2C_SET_CONTROL_REG(I2C0, I2C_I2CON_STA);
 
         /* Wait I2C Tx Finish */
-        while(g_u8EndFlag == 0);
+        u32TimeOutCnt = I2C_TIMEOUT;
+        while(g_u8EndFlag == 0)
+        {
+            if(--u32TimeOutCnt == 0)
+            {
+                printf("Wait for I2C Tx finish time-out!\n");
+                goto lexit;
+            }
+        }
         g_u8EndFlag = 0;
 
         /* I2C function to read data from slave */
@@ -291,16 +298,26 @@ int32_t main(void)
         I2C_SET_CONTROL_REG(I2C0, I2C_I2CON_STA);
 
         /* Wait I2C Rx Finish */
-        while(g_u8EndFlag == 0);
+        u32TimeOutCnt = I2C_TIMEOUT;
+        while(g_u8EndFlag == 0)
+        {
+            if(--u32TimeOutCnt == 0)
+            {
+                printf("Wait for I2C Rx finish time-out!\n");
+                goto lexit;
+            }
+        }
 
         /* Compare data */
         if(g_u8RxData != g_au8TxData[2])
         {
             printf("I2C Byte Write/Read Failed, Data 0x%x\n", g_u8RxData);
-            return -1;
+            goto lexit;
         }
     }
     printf("I2C0 Access EEPROM Test OK\n");
+
+lexit:
 
     s_I2C0HandlerFn = NULL;
 

@@ -40,8 +40,12 @@ void UART1_IRQHandler(void)
 /*---------------------------------------------------------------------------------------------------------*/
 void PowerDownFunction(void)
 {
+    uint32_t u32TimeOutCnt;
+
     /* Check if all the debug messages are finished */
-    UART_WAIT_TX_EMPTY(UART0);
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    UART_WAIT_TX_EMPTY(UART0)
+        if(--u32TimeOutCnt == 0) break;
 
     /* Enter to Power-down mode */
     CLK_PowerDown();
@@ -56,8 +60,8 @@ void UART_CTSWakeUpTest(void)
 
     printf("+----------------------------------------------------------+\n");
     printf("|   Power-Down and Wake-up by UART interrupt Sample Code   |\n");
-    printf("+----------------------------------------------------------+\n\n");    
-    
+    printf("+----------------------------------------------------------+\n\n");
+
     /* Clear Modem Status interrupt before entering Power-down mode */
     UART_ClearIntFlag(UART1, UART_ISR_MODEM_INT_Msk);
 
@@ -71,16 +75,16 @@ void UART_CTSWakeUpTest(void)
     SYS_UnlockReg();
 
     /* Enter to Power-down mode */
-    PowerDownFunction(); 
+    PowerDownFunction();
 
     /* Lock protected registers after entering Power-down mode */
     SYS_LockReg();
 
     /* Disable UART Wake-up function and Modem Status interrupt */
     UART_DisableInt(UART1, UART_IER_WAKE_EN_Msk|UART_IER_MODEM_IEN_Msk);
-       
-    printf("\nSystem waken-up done.\n");       
-    printf("\nUART Sample Program End.\n");    
+
+    printf("\nSystem waken-up done.\n");
+    printf("\nUART Sample Program End.\n");
 
 }
 
@@ -110,11 +114,11 @@ void SYS_Init(void)
 
     /* Enable UART module clock */
     CLK_EnableModuleClock(UART0_MODULE);
-    CLK_EnableModuleClock(UART1_MODULE);    
+    CLK_EnableModuleClock(UART1_MODULE);
 
     /* Select UART module clock source */
     CLK_SetModuleClock(UART0_MODULE, CLK_CLKSEL1_UART_S_HXT, CLK_CLKDIV_UART(1));
-    CLK_SetModuleClock(UART1_MODULE, CLK_CLKSEL1_UART_S_HXT, CLK_CLKDIV_UART(1));    
+    CLK_SetModuleClock(UART1_MODULE, CLK_CLKSEL1_UART_S_HXT, CLK_CLKDIV_UART(1));
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init I/O Multi-function                                                                                 */
@@ -129,7 +133,7 @@ void SYS_Init(void)
     SYS->P1_MFP |= (SYS_MFP_P12_RXD1 | SYS_MFP_P13_TXD1);
 
     /* Set P0 multi-function pins for UART1 CTS */
-    SYS->P0_MFP = SYS->P0_MFP & (~SYS_MFP_P00_Msk) | SYS_MFP_P00_CTS1;
+    SYS->P0_MFP = (SYS->P0_MFP & (~SYS_MFP_P00_Msk)) | SYS_MFP_P00_CTS1;
 
 }
 
@@ -174,9 +178,9 @@ int32_t main(void)
 
     /* Init UART0 for printf */
     UART0_Init();
-    
+
     /* Init UART1 for testing */
-    UART1_Init();    
+    UART1_Init();
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* SAMPLE CODE                                                                                             */

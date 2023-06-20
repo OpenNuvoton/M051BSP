@@ -21,10 +21,15 @@
 /*---------------------------------------------------------------------------------------------------------*/
 void PowerDownFunction(void)
 {
+    uint32_t u32TimeOutCnt;
+
+    /* Unlock protected registers */
     SYS_UnlockReg();
 
     /* To check if all the debug messages are finished */
-    while(!(UART0->FSR & UART_FSR_TE_FLAG_Msk));
+    u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
+    UART_WAIT_TX_EMPTY(UART0)
+        if(--u32TimeOutCnt == 0) break;
 
     SCB->SCR = 4;
 
@@ -54,7 +59,7 @@ void GPIOP0P1_IRQHandler(void)
     }
     else
     {
-        /* Un-expected interrupt. Just clear all PORT0, PORT1 interrupts */
+        /* Un-expected interrupt. Just clear all PORT0 and PORT1 interrupts */
         P0->ISRC = P0->ISRC;
         P1->ISRC = P1->ISRC;
         printf("Un-expected interrupts.\n");
@@ -79,7 +84,7 @@ void SYS_Init(void)
 
     /* Set PLL to Power down mode and HW will also clear PLL_STB bit in CLKSTATUS register */
     CLK->PLLCON |= CLK_PLLCON_PD_Msk;
-    
+
     /* Enable external XTAL 12MHz clock */
     CLK->PWRCON |= CLK_PWRCON_XTL12M_EN_Msk;
 
@@ -114,7 +119,7 @@ void SYS_Init(void)
 
 }
 
-void UART0_Init()
+void UART0_Init(void)
 {
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init UART                                                                                               */
@@ -131,7 +136,7 @@ void UART0_Init()
 /*---------------------------------------------------------------------------------------------------------*/
 /* MAIN function                                                                                           */
 /*---------------------------------------------------------------------------------------------------------*/
-int main(void)
+int32_t main(void)
 {
     /* Unlock protected registers */
     SYS_UnlockReg();
@@ -152,13 +157,15 @@ int main(void)
     P1->IMD |= (GPIO_IMD_EDGE << 3);
     P1->IEN |= (BIT3 << GPIO_IEN_IR_EN_Pos);
     NVIC_EnableIRQ(GPIO_P0P1_IRQn);
-    
+
     /* Waiting for P1.3 rising-edge interrupt event */
     while(1)
     {
         printf("Enter to Power-Down ......\n");
+
+        /* Enter to Power-down mode */
         PowerDownFunction();
-        while(UART0->FSR & UART_FSR_TE_FLAG_Msk);
+
         printf("System waken-up done.\n\n");
     }
 

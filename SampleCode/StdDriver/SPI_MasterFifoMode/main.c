@@ -77,7 +77,7 @@ int main(void)
     /* Set TX FIFO threshold, enable TX FIFO threshold interrupt and RX FIFO time-out interrupt */
     SPI_EnableFIFO(SPI0, 4, 4);
     SPI_EnableInt(SPI0, SPI_FIFO_TX_INT_MASK | SPI_FIFO_TIMEOUT_INT_MASK);
-    
+
     g_u32TxDataCount = 0;
     g_u32RxDataCount = 0;
     NVIC_EnableIRQ(SPI0_IRQn);
@@ -108,7 +108,7 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
-    
+
     /* Enable external 12MHz XTAL */
     CLK_EnableXtalRC(CLK_PWRCON_XTL12M_EN_Msk);
 
@@ -171,7 +171,7 @@ void SPI0_IRQHandler(void)
         SPI_WRITE_TX0(SPI0, g_au32SourceData[g_u32TxDataCount++]);
     }
     if(g_u32TxDataCount >= TEST_COUNT)
-         SPI_DisableInt(SPI0, SPI_FIFO_TX_INT_MASK); /* Disable TX FIFO threshold interrupt */
+        SPI_DisableInt(SPI0, SPI_FIFO_TX_INT_MASK); /* Disable TX FIFO threshold interrupt */
 
     /* Check the RX FIFO time-out interrupt flag */
     if(SPI_GetIntFlag(SPI0, SPI_FIFO_TIMEOUT_INT_MASK))
