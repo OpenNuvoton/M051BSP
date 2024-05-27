@@ -6,10 +6,10 @@
 ; * @brief    M051 Series Startup Source File for IAR Platform
 ; *
 ; * @note
-; * SPDX-License-Identifier: Apache-2.0
 ; *
-; * Copyright (C) 2011 Nuvoton Technology Corp. All rights reserved.
+; * @copyright SPDX-License-Identifier: Apache-2.0
 ; *
+; * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
 ; ******************************************************************************/
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -22,7 +22,8 @@
 
     SECTION .intvec:CODE:NOROOT(2);; 4 bytes alignment
 
-    EXTERN  SystemInit  
+    EXTERN  SystemInit	
+    EXTERN  ProcessHardFault
     EXTERN  __iar_program_start
     PUBLIC  __vector_table
 
@@ -101,12 +102,7 @@ Reset_Handler
         LDR     R2, =0x50000024
         LDR     R1, =0x00005AA5
         STR     R1, [R2]
-
-        ; Disable NMI (Assign to reserved IRQ)
-        LDR     R2, =0x50000380
-        LDR     R1, =0x0000001F
-        STR     R1, [R2]
-
+        
         ; Lock register
         MOVS    R1, #0
         STR     R1, [R0]                
@@ -117,6 +113,15 @@ Reset_Handler
         BX       R0
 
     PUBWEAK HardFault_Handler
+HardFault_Handler\
+
+        MOV     R0, LR
+        MRS     R1, MSP
+        MRS     R2, PSP
+        LDR     R3, =ProcessHardFault
+        BLX     R3
+        BX      R0
+
     PUBWEAK NMI_Handler       
     PUBWEAK SVC_Handler       
     PUBWEAK PendSV_Handler    
@@ -145,7 +150,7 @@ Reset_Handler
     PUBWEAK ADC_IRQHandler
     PUBWEAK RTC_IRQHandler  
     SECTION .text:CODE:REORDER:NOROOT(2)
-HardFault_Handler 
+;HardFault_Handler 
 NMI_Handler       
 SVC_Handler       
 PendSV_Handler    
@@ -177,5 +182,33 @@ Default_Handler
     B Default_Handler         
 
     
+;void SH_ICE(void)
+    PUBLIC    SH_ICE
+SH_ICE    
+    CMP   R2,#0
+    BEQ   SH_End
+    STR   R0,[R2]   ; Save the return value to *pn32Out_R0
+
+;void SH_End(void)
+    PUBLIC    SH_End
+SH_End
+    MOVS   R0,#1    ; Set return value to 1
+    BX     lr       ; Return
+
+
+;int32_t SH_DoCommand(int32_t n32In_R0, int32_t n32In_R1, int32_t *pn32Out_R0)
+    PUBLIC    SH_DoCommand
+SH_DoCommand
+    BKPT   0xAB             ; This instruction will cause ICE trap or system HardFault
+    B      SH_ICE
+SH_HardFault                ; Captured by HardFault
+    MOVS   R0,#0            ; Set return value to 0
+    BX     lr               ; Return
+    
+    
+    PUBLIC    __PC
+__PC          
+        MOV     r0, lr
+        BLX     lr
     END
 

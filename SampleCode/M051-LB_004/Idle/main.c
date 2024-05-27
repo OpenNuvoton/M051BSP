@@ -1,8 +1,7 @@
-/*---------------------------------------------------------------------------------------------------------*/
-/*                                                                                                         */
-/* Copyright(c) 2009 Nuvoton Technology Corp. All rights reserved.                                         */
-/*                                                                                                         */
-/*---------------------------------------------------------------------------------------------------------*/
+/******************************************************************************
+ * @copyright SPDX-License-Identifier: Apache-2.0
+ * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
+*****************************************************************************/
 #include <stdio.h>
 #include "M051Series.h"
 #include "lcd_driver.h"
@@ -11,7 +10,8 @@
 #define PLLCON_SETTING      CLK_PLLCON_50MHz_HIRC
 #define PLL_CLOCK           50191800
 
-
+void ProcessHardFault(void) {}
+void SH_Return(void) {}
 
 void WDT_IRQHandler(void)
 {
@@ -76,7 +76,9 @@ void SYS_Init(void)
     SYS->P1_MFP |= (SYS_MFP_P14_SPISS0 | SYS_MFP_P15_MOSI_0 | SYS_MFP_P16_MISO_0 | SYS_MFP_P17_SPICLK0);
 
     /* Set P4.0 for PWM0 */
-    SYS->P4_MFP = SYS->P4_MFP & (~SYS_MFP_P40_Msk) | SYS_MFP_P40_PWM0;
+		SYS->P4_MFP &= ~(SYS_MFP_P40_Msk);
+    SYS->P4_MFP |= SYS_MFP_P40_PWM0;
+
 }
 
 void WDT_Init(void)

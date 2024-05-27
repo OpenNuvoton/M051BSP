@@ -6,7 +6,8 @@
  * @brief    This is the header file of i2c_hardware.c
  *
  * @note
- * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
+ * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
 *****************************************************************************/
 #ifndef __I2C_HARDWARE_H__
 #define __I2C_HARDWARE_H__

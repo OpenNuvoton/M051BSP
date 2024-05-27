@@ -6,8 +6,9 @@
  * @brief    M051 Series I2C Driver Sample Code for Wake-up (Slave)
  *
  * @note
- * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
  *
+ * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include "M051Series.h"
@@ -322,7 +323,7 @@ int32_t main(void)
     }
 
     /* Wake-up Interrupt Message */
-    printf("Power-down Wake-up INT 0x%x\n", ((CLK->PWRCON) & CLK_PWRCON_PD_WU_STS_Msk));
+    printf("Power-down Wake-up INT 0x%x\n",(unsigned int)((CLK->PWRCON) & CLK_PWRCON_PD_WU_STS_Msk));
     printf("I2C0 WAKE INT 0x%x\n", I2C0->I2CWKUPSTS);
 
     /* Disable power wake-up interrupt */

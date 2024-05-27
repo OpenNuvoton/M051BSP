@@ -5,7 +5,8 @@
  * $Date: 15/05/22 2:31p $
  * @brief    Show how to use the timer1 capture function to capture timer1 counter value.
  * @note
- * Copyright (C) 2013 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
+ * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include "M051Series.h"

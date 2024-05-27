@@ -6,10 +6,10 @@
 ; * @brief    M051 Series Startup Source File
 ; *
 ; * @note
-; * SPDX-License-Identifier: Apache-2.0
 ; *
-; * Copyright (C) 2011 Nuvoton Technology Corp. All rights reserved.
+; * @copyright SPDX-License-Identifier: Apache-2.0
 ; *
+; * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
 ; ******************************************************************************/
     IF :LNOT: :DEF: Stack_Size
 Stack_Size      EQU     0x00000200
@@ -23,9 +23,9 @@ __initial_sp
 ; <h> Heap Configuration
 ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
-    IF :LNOT: :DEF: Heap_Size
+
 Heap_Size       EQU     0x00000000
-    ENDIF
+
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base
 Heap_Mem        SPACE   Heap_Size
@@ -141,8 +141,14 @@ NMI_Handler     PROC
                 ENDP
 HardFault_Handler\
                 PROC
+                IMPORT  ProcessHardFault
                 EXPORT  HardFault_Handler         [WEAK]
-                B       .
+                MOV     R0, LR                 
+                MRS     R1, MSP                
+                MRS     R2, PSP                
+                LDR     R3, =ProcessHardFault 
+                BLX     R3                     
+                BX      R0                     
                 ENDP
 SVC_Handler     PROC
                 EXPORT  SVC_Handler               [WEAK]
@@ -236,5 +242,28 @@ __user_initial_stackheap
                 ALIGN
 
                 ENDIF
+
+;int32_t SH_DoCommand(int32_t n32In_R0, int32_t n32In_R1, int32_t *pn32Out_R0)
+SH_DoCommand    PROC
+    
+                EXPORT      SH_DoCommand
+                IMPORT      SH_Return
+                    
+                BKPT   0xAB                ; Wait ICE or HardFault
+                LDR    R3, =SH_Return 
+                MOV    R4, lr          
+                BLX    R3                  ; Call SH_Return. The return value is in R0
+                BX     R4                  ; Return value = R0
+                
+                ENDP
+
+__PC            PROC
+                EXPORT      __PC
+                
+                MOV     r0, lr
+                BLX     lr
+                ALIGN
+                    
+                ENDP
                 
                 END

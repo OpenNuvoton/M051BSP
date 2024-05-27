@@ -6,9 +6,9 @@
  * @brief    M051 series 24LC64 EEPROM library header file
  *
  * @note
- * SPDX-License-Identifier: Apache-2.0
  *
- * Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
+ * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
  *****************************************************************************/
 
 #ifndef __EEPROM_24LC64_H__

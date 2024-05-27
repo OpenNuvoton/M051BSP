@@ -5,7 +5,8 @@
  * $Date: 15/05/22 2:35p $
  * @brief    Use timer-0 toggle-output interrupt event to wake-up system. 
  * @note
- * Copyright (C) 2013 Nuvoton Technology Corp. All rights reserved.
+ * @copyright SPDX-License-Identifier: Apache-2.0
+ * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
  ******************************************************************************/
 #include <stdio.h>
 #include "M051Series.h"
