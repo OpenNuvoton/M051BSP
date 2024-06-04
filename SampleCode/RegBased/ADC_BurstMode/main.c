@@ -268,6 +268,8 @@ void AdcBurstModeTest()
 /*---------------------------------------------------------------------------------------------------------*/
 void ADC_IRQHandler(void)
 {
+	ADC->ADSR = ADC_ADSR_ADF_Msk;      /* clear the A/D conversion flag */
+
     while(((ADC->ADSR & (1 << ((0) + ADC_ADSR_VALID_Pos))) ? 1 : 0)) /* Check the VALID bits */
     {
         if(g_u32AdcDataCount >= BURST_COUNT)
@@ -275,7 +277,6 @@ void ADC_IRQHandler(void)
         /* In burst mode, the software always gets the conversion result of the specified channel from channel 0 */
         g_au16AdcData[g_u32AdcDataCount++] = (uint16_t)((ADC->ADDR[(0)] & ADC_ADDR_RSLT_Msk) >> ADC_ADDR_RSLT_Pos);
     }
-    ADC->ADSR = ADC_ADSR_ADF_Msk;      /* clear the A/D conversion flag */
 }
 
 

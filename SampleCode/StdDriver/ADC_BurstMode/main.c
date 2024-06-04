@@ -250,6 +250,8 @@ void AdcBurstModeTest()
 /*---------------------------------------------------------------------------------------------------------*/
 void ADC_IRQHandler(void)
 {
+	ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT); /* clear the A/D conversion flag */
+
     while(ADC_IS_DATA_VALID(ADC, 0)) /* Check the VALID bits */
     {
         if(g_u32AdcDataCount >= BURST_COUNT)
@@ -258,7 +260,6 @@ void ADC_IRQHandler(void)
         g_au16AdcData[g_u32AdcDataCount++] = (uint16_t)ADC_GET_CONVERSION_DATA(ADC, 0);
     }
 
-    ADC_CLR_INT_FLAG(ADC, ADC_ADF_INT); /* clear the A/D conversion flag */
 }
 
 /*---------------------------------------------------------------------------------------------------------*/
