@@ -246,7 +246,7 @@ int32_t main(void)
     {
         /* Call the function of LDROM */
         func = (int32_t (*)(int32_t))g_au32funcTable[i];
-        if(func(i + 1) == ((i + 1)*(i + 1)))
+        if(func(i + 1) == ((i + 1) * (i + 1)))
         {
             printf("Call LDROM function %d ok!\n", i);
         }
@@ -282,7 +282,3 @@ lexit:
     printf("\nDone\n");
     while(SYS->PDID) __WFI();
 }
-
-
-
-

@@ -3,7 +3,7 @@
  * @version  V3.00
  * $Revision: 4 $
  * $Date: 15/05/22 2:33p $
- * @brief    Implement timer counting in periodic mode. 
+ * @brief    Implement timer counting in periodic mode.
  * @note
  * @copyright SPDX-License-Identifier: Apache-2.0
  * @copyright Copyright (C) 2014 Nuvoton Technology Corp. All rights reserved.
@@ -103,6 +103,8 @@ void TMR3_IRQHandler(void)
 
 void SYS_Init(void)
 {
+	uint32_t u32TimeOutCnt;
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -110,7 +112,9 @@ void SYS_Init(void)
     CLK->PWRCON |= CLK_PWRCON_IRC22M_EN_Msk;
 
     /* Waiting for IRC22M clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_IRC22M_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_IRC22M_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Switch HCLK clock source to HIRC */
     CLK->CLKSEL0 = CLK_CLKSEL0_HCLK_S_HIRC;
@@ -125,9 +129,15 @@ void SYS_Init(void)
     CLK->PLLCON = PLLCON_SETTING;
 
     /* Waiting for clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk));
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_IRC10K_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_IRC10K_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Switch HCLK clock source to PLL, STCLK to HCLK/2 */
     CLK->CLKSEL0 = CLK_CLKSEL0_STCLK_S_HCLK_DIV2 | CLK_CLKSEL0_HCLK_S_PLL;
@@ -151,7 +161,7 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Set P3 multi-function pins for UART0 RXD, TXD */
     SYS->P3_MFP &= ~(SYS_MFP_P30_Msk | SYS_MFP_P31_Msk);
-    SYS->P3_MFP |=  (SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0);
+    SYS->P3_MFP |= (SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0);
 }
 
 void UART0_Init(void)

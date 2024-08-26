@@ -20,6 +20,8 @@ extern int32_t SRAM_BS616LV4017(void);
 
 void SYS_Init(void)
 {
+	uint32_t u32TimeOutCnt;
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -27,7 +29,9 @@ void SYS_Init(void)
     CLK->PWRCON |= CLK_PWRCON_IRC22M_EN_Msk;
 
     /* Waiting for IRC22M clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_IRC22M_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_IRC22M_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Switch HCLK clock source to HIRC */
     CLK->CLKSEL0 = CLK_CLKSEL0_HCLK_S_HIRC;
@@ -42,8 +46,12 @@ void SYS_Init(void)
     CLK->PLLCON = CLK_PLLCON_50MHz_HXT;
 
     /* Waiting for clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Switch HCLK clock source to PLL, STCLK to HCLK/2 */
     CLK->CLKSEL0 = CLK_CLKSEL0_STCLK_S_HCLK_DIV2 | CLK_CLKSEL0_HCLK_S_PLL;
@@ -68,11 +76,11 @@ void SYS_Init(void)
     /*---------------------------------------------------------------------------------------------------------*/
     /* Set P3 multi-function pins for UART0 RXD and TXD */
     SYS->P3_MFP &= ~(SYS_MFP_P30_Msk | SYS_MFP_P31_Msk);
-    SYS->P3_MFP |=  (SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0);
+    SYS->P3_MFP |= (SYS_MFP_P30_RXD0 | SYS_MFP_P31_TXD0);
 
     /* Set P3 multi-function pins for EBI MCLK, nWR and nRD */
     SYS->P3_MFP &= ~(SYS_MFP_P33_Msk | SYS_MFP_P36_Msk | SYS_MFP_P37_Msk);
-    SYS->P3_MFP |=  (SYS_MFP_P33_MCLK | SYS_MFP_P36_nWR | SYS_MFP_P37_nRD);
+    SYS->P3_MFP |= (SYS_MFP_P33_MCLK | SYS_MFP_P36_nWR | SYS_MFP_P37_nRD);
 
     /* Set P0 multi-function pins for EBI AD0 ~ AD7 */
     SYS->P0_MFP &= ~(SYS_MFP_P00_Msk | SYS_MFP_P01_Msk | SYS_MFP_P02_Msk | SYS_MFP_P03_Msk |
@@ -88,11 +96,11 @@ void SYS_Init(void)
 
     /* Set P1 multi-function pins for EBI nWRL and nWRH */
     SYS->P1_MFP &= ~(SYS_MFP_P10_Msk | SYS_MFP_P11_Msk);
-    SYS->P1_MFP |=  (SYS_MFP_P10_nWRL | SYS_MFP_P11_nWRH);
+    SYS->P1_MFP |= (SYS_MFP_P10_nWRL | SYS_MFP_P11_nWRH);
 
     /* Set P4 multi-function pins for EBI nCS, ALE */
     SYS->P4_MFP &= ~(SYS_MFP_P44_Msk | SYS_MFP_P45_Msk);
-    SYS->P4_MFP |=  (SYS_MFP_P44_nCS | SYS_MFP_P45_ALE);
+    SYS->P4_MFP |= (SYS_MFP_P44_nCS | SYS_MFP_P45_ALE);
 }
 
 void UART0_Init(void)
@@ -142,7 +150,7 @@ int main(void)
     EBI->EXTIME = 0x03003318;
 
     /* Start SRAM test */
-    if( SRAM_BS616LV4017() == 0)
+    if(SRAM_BS616LV4017() == 0)
     {
         printf("*** SRAM Test OK ***\n");
     }

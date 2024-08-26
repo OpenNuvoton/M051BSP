@@ -27,19 +27,19 @@ extern char GetChar(void);
  */
 static void SendChar_ToUART(int ch)
 {
-    while (UART0->FSR & UART_FSR_TX_FULL_Msk);
+    while(UART0->FSR & UART_FSR_TX_FULL_Msk);
 
     UART0->DATA = ch;
     if(ch == '\n')
     {
-        while (UART0->FSR & UART_FSR_TX_FULL_Msk);
+        while(UART0->FSR & UART_FSR_TX_FULL_Msk);
         UART0->DATA = '\r';
     }
 }
 
 static void PutString(char *str)
 {
-    while (*str != '\0')
+    while(*str != '\0')
     {
         SendChar_ToUART(*str++);
     }
@@ -204,6 +204,8 @@ void SYS_PLL_Test(void)
 
 void SYS_Init(void)
 {
+	uint32_t u32TimeOutCnt;
+
 
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
@@ -213,7 +215,9 @@ void SYS_Init(void)
     CLK->PWRCON |= CLK_PWRCON_OSC22M_EN_Msk;
 
     /* Waiting for Internal RC clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Switch HCLK clock source to Internal RC and HCLK source divide 1 */
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_HIRC;
@@ -226,11 +230,15 @@ void SYS_Init(void)
     CLK->PWRCON |= CLK_PWRCON_XTL12M_EN_Msk;
 
     /* Waiting for external XTAL clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Set core clock as PLL_CLOCK from PLL */
     CLK->PLLCON = PLLCON_SETTING;
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_PLL;
 
     /* Update System Core Clock */

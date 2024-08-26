@@ -152,6 +152,8 @@ int32_t CalPeriodTime(void)
 
 void SYS_Init(void)
 {
+	uint32_t u32TimeOutCnt;
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -160,7 +162,9 @@ void SYS_Init(void)
     CLK->PWRCON |= CLK_PWRCON_OSC22M_EN_Msk;
 
     /* Waiting for IRC22M clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Switch HCLK clock source to Internal RC and HCLK source divide 1 */
     CLK->CLKSEL0 &= ~CLK_CLKSEL0_HCLK_S_Msk;
@@ -349,7 +353,7 @@ int32_t main(void)
         PWMB->CAPENR |= PWM_CAPENR_CINEN2_Msk;
 
         /* Capture the Input Waveform Data */
-        if( CalPeriodTime() < 0 ) goto lexit;
+        if(CalPeriodTime() < 0) goto lexit;
         /*------------------------------------------------------------------------------------------------------*/
         /* Stop PWMB channel 1 (Recommended procedure method 1)                                                 */
         /* Set PWM Timer loaded value(CNR) as 0. When PWM internal counter(PDR) reaches to 0, disable PWM Timer */
@@ -414,7 +418,3 @@ lexit:
 
     while(1);
 }
-
-
-
-

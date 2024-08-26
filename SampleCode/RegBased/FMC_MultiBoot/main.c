@@ -24,6 +24,8 @@ int32_t g_FMC_i32ErrCode;
 
 void SYS_Init(void)
 {
+	uint32_t u32TimeOutCnt;
+
     int32_t i;
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
@@ -127,12 +129,12 @@ int32_t main(void)
     printf("\nCPU @ %dHz\n\n", SystemCoreClock);
 
     /* Check Chip type if it does not support H/W multi-boot */
-    u32PDID = SYS->PDID & 0xF000F000; 
+    u32PDID = SYS->PDID & 0xF000F000;
     if((u32PDID == 0x10005000) | (u32PDID == 0x20005000))
     {
         printf("Warning: This chip does not support H/W multi-boot.\n");
-         goto lexit;
-    }   
+        goto lexit;
+    }
 
 #if defined(__ICCARM__)
     printf("VECMAP = 0x%x\n", FMC_GetVECMAP());
@@ -179,21 +181,21 @@ int32_t main(void)
     ch = getchar();
     switch(ch)
     {
-    case '0':
-        FMC_SetVectorPageAddr(0x1000);
-        break;
-    case '1':
-        FMC_SetVectorPageAddr(0x2000);
-        break;
-    case '2':
-        FMC_SetVectorPageAddr(0x3000);
-        break;
-    case '3':
-        FMC_SetVectorPageAddr(0x100000);
-        break;
-    default:
-        FMC_SetVectorPageAddr(0x0);
-        break;
+        case '0':
+            FMC_SetVectorPageAddr(0x1000);
+            break;
+        case '1':
+            FMC_SetVectorPageAddr(0x2000);
+            break;
+        case '2':
+            FMC_SetVectorPageAddr(0x3000);
+            break;
+        case '3':
+            FMC_SetVectorPageAddr(0x100000);
+            break;
+        default:
+            FMC_SetVectorPageAddr(0x0);
+            break;
     }
 
     /* Reset CPU only to reset to new vector page */
@@ -215,7 +217,3 @@ lexit:
     printf("\nDone\n");
     while(SYS->PDID) __WFI();
 }
-
-
-
-

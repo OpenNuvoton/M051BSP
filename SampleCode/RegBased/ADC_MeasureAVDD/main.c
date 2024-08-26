@@ -41,6 +41,8 @@ volatile uint8_t g_u8ADF;
 
 void SYS_Init(void)
 {
+	uint32_t u32TimeOutCnt;
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -49,7 +51,9 @@ void SYS_Init(void)
     CLK->PWRCON |= CLK_PWRCON_OSC22M_EN_Msk;
 
     /* Waiting for Internal RC clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Switch HCLK clock source to Internal RC */
     CLK->CLKSEL0 &= ~CLK_CLKSEL0_HCLK_S_Msk;
@@ -59,11 +63,15 @@ void SYS_Init(void)
     CLK->PWRCON |= CLK_PWRCON_XTL12M_EN_Msk;
 
     /* Waiting for external XTAL clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Set core clock as PLL_CLOCK from PLL */
     CLK->PLLCON = PLLCON_SETTING;
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
     CLK->CLKSEL0 &= (~CLK_CLKSEL0_HCLK_S_Msk);
     CLK->CLKSEL0 |= CLK_CLKSEL0_HCLK_S_PLL;
 
@@ -181,7 +189,7 @@ uint32_t GetAVDDCodeByADC(void)
     /* Configure ADC: single-end input, single scan mode, enable ADC analog circuit. */
     ADC->ADCR = (ADC_ADCR_ADMD_SINGLE | ADC_ADCR_DIFFEN_SINGLE_END | ADC_ADCR_ADEN_CONVERTER_ENABLE);
     /* Configure the analog input source of channel 7 as internal band-gap voltage */
-    ADC->ADCHER = ((ADC->ADCHER & ~(ADC_ADCHER_CHEN_Msk|ADC_ADCHER_PRESEL_Msk)) | ((1 << 7)|ADC_ADCHER_PRESEL_INT_BANDGAP));
+    ADC->ADCHER = ((ADC->ADCHER & ~(ADC_ADCHER_CHEN_Msk | ADC_ADCHER_PRESEL_Msk)) | ((1 << 7) | ADC_ADCHER_PRESEL_INT_BANDGAP));
 
     /* Power on ADC */
     ADC->ADCR |= ADC_ADCR_ADEN_Msk;
@@ -340,4 +348,3 @@ int main(void)
     while(1);
 
 }
-

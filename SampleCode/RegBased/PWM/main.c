@@ -97,6 +97,8 @@ void PWM_PwmIRQHandler(void)
 
 void SYS_Init(void)
 {
+	uint32_t u32TimeOutCnt;
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -105,7 +107,9 @@ void SYS_Init(void)
     CLK->PWRCON |= CLK_PWRCON_OSC22M_EN_Msk;
 
     /* Waiting for IRC22M clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Switch HCLK clock source to Internal RC and HCLK source divide 1 */
     CLK->CLKSEL0 &= ~CLK_CLKSEL0_HCLK_S_Msk;
@@ -215,18 +219,18 @@ int32_t main(void)
 
         switch(u8Item)
         {
-        case '1':
-        case '2':
-        case '3':
-        case '4':
-        case '5':
-        case '6':
-        case '7':
-            g_u16Frequency = g_au16ScaleFreq[(u8Item - '1')];
-            break;
-        default:
-            u8ItemOK = 0;
-            break;
+            case '1':
+            case '2':
+            case '3':
+            case '4':
+            case '5':
+            case '6':
+            case '7':
+                g_u16Frequency = g_au16ScaleFreq[(u8Item - '1')];
+                break;
+            default:
+                u8ItemOK = 0;
+                break;
         }
 
         if(u8ItemOK)
@@ -313,7 +317,3 @@ int32_t main(void)
         }
     }
 }
-
-
-
-

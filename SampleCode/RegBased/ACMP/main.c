@@ -67,6 +67,8 @@ void ACMP01_IRQHandler(void)
 
 void SYS_Init(void)
 {
+	uint32_t u32TimeOutCnt;
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -75,7 +77,9 @@ void SYS_Init(void)
     CLK->PWRCON |= CLK_PWRCON_XTL12M_EN_Msk;
 
     /* Waiting for clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Select HXT as the clock source of UART */
     CLK->CLKSEL1 &= (~CLK_CLKSEL1_UART_S_Msk);
@@ -113,5 +117,3 @@ void UART_Init(void)
 }
 
 /*** (C) COPYRIGHT 2014 Nuvoton Technology Corp. ***/
-
-

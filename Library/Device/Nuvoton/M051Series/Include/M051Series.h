@@ -90,7 +90,10 @@ typedef enum IRQn
 #define __MPU_PRESENT           0       /*!< armikcmu does not provide a MPU present or not       */
 #define __NVIC_PRIO_BITS        2       /*!< armikcmu Supports 2 Bits for the Priority Levels     */
 #define __Vendor_SysTickConfig  0       /*!< Set to 1 if different SysTick Config is used         */
-
+#define __FPU_PRESENT           0
+#ifndef __SOFTFP__
+# define __SOFTFP__             1
+#endif
 
 #include "core_cm0.h"                   /*!< Cortex-M0 processor and core peripherals             */
 #include "system_M051Series.h"          /*!< M051Series System                                    */
@@ -440,7 +443,7 @@ typedef struct
  * | :----: | :----:   | :---- |
  * |[7:0]   |PTDT      |PWM Trigger Delay Time
  * |        |          |Set this field will delay ADC start conversion time after PWM trigger.
- * |        |          |PWM trigger delay time is (4 * PTDT) * system clock 
+ * |        |          |PWM trigger delay time is (4 * PTDT) * system clock
  */
 
     __I  uint32_t ADDR[8];       /* Offset: 0x00-0x1C  A/D Data Register                                             */
@@ -575,11 +578,11 @@ typedef struct
  * |        |            |When the default clock source is from external 4~24 MHz high speed crystal, this bit is set to 1 automatically.
  * |        |            |0 = External 4~24 MHz high speed crystal oscillator (HXT) Disabled.
  * |        |            |1 = External 4~24 MHz high speed crystal oscillator (HXT) Enabled.
- * |        |            |Note: This bit is write protected bit. Refer to the REGWRPROT register.    
+ * |        |            |Note: This bit is write protected bit. Refer to the REGWRPROT register.
  * |[2]     |OSC22M_EN   |Internal 22.1184 MHz High Speed Oscillator (HIRC) Enable Control (Write Protect)
  * |        |            |0 = Internal 22.1184 MHz high speed oscillator (HIRC) Disabled.
  * |        |            |1 = Internal 22.1184 MHz high speed oscillator (HIRC) Enabled.
- * |        |            |Note: This bit is write protected bit. Refer to the REGWRPROT register. 
+ * |        |            |Note: This bit is write protected bit. Refer to the REGWRPROT register.
  * |[3]     |OSC10K_EN   |Internal 10 KHz Low Speed Oscillator (LIRC) Enable Control (Write Protect)
  * |        |            |0 = Internal 10 kHz low speed oscillator (LIRC) Disabled.
  * |        |            |1 = Internal 10 kHz low speed oscillator (LIRC) Enabled.
@@ -599,7 +602,7 @@ typedef struct
  * |        |            |Set by "Power-down wake-up event", it indicates that resume from Power-down mode.
  * |        |            |The flag is set if the GPIO, UART, WDT, ACMP or BOD wake-up occurred.
  * |        |            |Write 1 to clear the bit to 0.
- * |        |            |Note: This bit is working only if PD_WU_INT_EN (PWRCON[5]) set to 1. 
+ * |        |            |Note: This bit is working only if PD_WU_INT_EN (PWRCON[5]) set to 1.
  * |[7]     |PWR_DOWN_EN|System Power-Down Enable Bit (Write Protect)
  * |        |            |When this bit is set to 1, Power-down mode is enabled and chip Power-down behavior will depends on the PD_WAIT_CPU bit
  * |        |            |(a) If the PD_WAIT_CPU is 0, then the chip enters Power-down mode immediately after the PWR_DOWN_EN bit set.
@@ -627,7 +630,7 @@ typedef struct
  * |[3]     |EBI_EN    |EBI Controller Clock Enable Control
  * |        |          |0 = EBI peripherial clock Disabled.
  * |        |          |1 = EBI peripherial clock Enabled.
- * |[4]     |HDIV_EN   |Divider Controller Clock Enable Control 
+ * |[4]     |HDIV_EN   |Divider Controller Clock Enable Control
  * |        |          |0 = Divider controller peripherial clock Disabled.
  * |        |          |1 = Divider controller peripherial clock Enabled.
  * @var CLK_T::APBCLK
@@ -659,7 +662,7 @@ typedef struct
  * |        |          |1 = I2C0 clock Enabled.
  * |[8]     |I2C1_EN   |I2C1 Clock Enable Control
  * |        |          |0 = I2C1 clock Disabled.
- * |        |          |1 = I2C1 clock Enabled. 
+ * |        |          |1 = I2C1 clock Enabled.
  * |[12]    |SPI0_EN   |SPI0 Clock Enable Control
  * |        |          |0 = SPI0 clock Disabled.
  * |        |          |1 = SPI0 clock Enabled.
@@ -689,7 +692,7 @@ typedef struct
  * |        |          |1 = ADC clock Enabled.
  * |[30]    |ACMP01_EN |Analog Comparator 0/1 Clock Enable Control
  * |        |          |0 = Analog Comparator 0/1 clock Disabled.
- * |        |          |1 = Analog Comparator 0/1 clock Enabled. 
+ * |        |          |1 = Analog Comparator 0/1 clock Enabled.
  * |[31]    |ACMP23_EN |Analog Comparator 2/3 Clock Enable Control
  * |        |          |0 = Analog Comparator 2/3 clock Disabled.
  * |        |          |1 = Analog Comparator 2/3 clock Enabled.
@@ -712,15 +715,15 @@ typedef struct
  * |        |           |1 = Internal 22.1184 MHz high speed oscillator (HIRC) clock is stable.
  * |[7]     |CLK_SW_FAIL|Clock switch fail flag
  * |        |           |0 = Clock switching success.
- * |        |           |1 = Clock switching failure. 
- * |        |           |Note1: 
- * |        |           |This bit is updated when software switches system clock source. 
- * |        |           |If switch target clock is stable, this bit will be set to 0. 
+ * |        |           |1 = Clock switching failure.
+ * |        |           |Note1:
+ * |        |           |This bit is updated when software switches system clock source.
+ * |        |           |If switch target clock is stable, this bit will be set to 0.
  * |        |           |If switch target clock is not stable, this bit will be set to 1.
  * |        |           |Note2: On M05xxBN, software can write 1 to clear the bit to 0.
- * |        |           |Note3: 
- * |        |           |On M05xxDN/DE, this bit is read only. 
- * |        |           |After selected clock source is stable, hardware will switch system clock to selected clock automatically, and CLK_SW_FAIL will be cleared automatically by hardware. 
+ * |        |           |Note3:
+ * |        |           |On M05xxDN/DE, this bit is read only.
+ * |        |           |After selected clock source is stable, hardware will switch system clock to selected clock automatically, and CLK_SW_FAIL will be cleared automatically by hardware.
  * @var CLK_T::CLKSEL0
  * Offset: 0x10  Clock Source Select Control Register 0
  * ---------------------------------------------------------------------------------------------------
@@ -753,7 +756,7 @@ typedef struct
  * |[1:0]   |WDT_S     |Watchdog Timer Clock Source Selection (Write Protect)
  * |        |          |10 = Clock source is from HCLK/2048 clock.
  * |        |          |11 = Clock source is from LIRC.
- * |        |          |Note: This bit is write protected bit. Refer to the REGWRPROT register. 
+ * |        |          |Note: This bit is write protected bit. Refer to the REGWRPROT register.
  * |[3:2]   |ADC_S     |ADC Peripheral Clock Source Selection
  * |        |          |00 = Clock source is from HXT.
  * |        |          |01 = Clock source is from PLL.
@@ -764,7 +767,7 @@ typedef struct
  * |        |          |1 = Clock source is from HCLK.
  * |[5]     |SPI1_S    |SPI1 clock Source Selection
  * |        |          |0 = Clock source is from PLL.
- * |        |          |1 = Clock source is from HCLK. 
+ * |        |          |1 = Clock source is from HCLK.
  * |[10:8]  |TMR0_S    |TIMER0 Clock Source Selection
  * |        |          |000 = Clock source is from HXT.
  * |        |          |010 = Clock source is from HCLK.
@@ -823,7 +826,7 @@ typedef struct
  * | :----: | :----:   | :---- |
  * |[3:2]   |FRQDIV_S  |Clock Divider Clock Source Select
  * |        |          |00 = clock source from HXT.
- * |        |          |10 = clock source from LIRC. 
+ * |        |          |10 = clock source from LIRC.
  * |        |          |10 = clock source from HCLK.
  * |        |          |11 = clock source from HIRC.
  * |[5:4]   |PWM45_S   |PWM4 and PWM5 Clock Source Selection
@@ -840,7 +843,7 @@ typedef struct
  * |        |          |11 = Clock source is from HIRC.
  * |[17:16] |WWDT_S    |Window Watchdog Timer Clock Source Selection
  * |        |          |10 = Clock source is from HCLK/2048 clock.
- * |        |          |11 = Clock source is from LIRC. 
+ * |        |          |11 = Clock source is from LIRC.
  * @var CLK_T::PLLCON
  * Offset: 0x20  PLL Control Register
  * ---------------------------------------------------------------------------------------------------
@@ -1367,7 +1370,7 @@ typedef struct
     __IO uint32_t ISPTRG;        /* Offset: 0x10  IISP Trigger Control Register                                      */
     __I  uint32_t DFBADR;        /* Offset: 0x14  Data Flash Base Address Register                                   */
     __IO uint32_t FATCON;        /* Offset: 0x18  Flash Access Time Control Register                                 */
-    __I  uint32_t RESERVED[9];   
+    __I  uint32_t RESERVED[9];
     __IO uint32_t ISPSTA;        /* Offset: 0x40  ISP Status Register                                                */
 } FMC_T;
 
@@ -1454,16 +1457,16 @@ typedef struct
  * |        |          |11 = Px.n is in Quasi-bidirectional mode.
  * |        |          |Note1: x = 0~4, n = 0~7.
  * |        |          |Note2: The default value is 0x0000_FFFF and all pins will be quasi-bidirectional mode after chip is powered on (only for M05xxBN).
- * |        |          |Note3: The initial value of this field is defined by CIOINI (CONFIG[10]) (only for M05xxDN/DE). 
- * |        |          |If CIOINI is set to 1, the default value is 0x0000_FFFF and all pins will be quasi-bidirectional mode after chip powered on. 
- * |        |          |If CIOINI is set to 0, the default value is 0x0000_0000 and all pins will be input tri-state mode after chip powered on.        
+ * |        |          |Note3: The initial value of this field is defined by CIOINI (CONFIG[10]) (only for M05xxDN/DE).
+ * |        |          |If CIOINI is set to 1, the default value is 0x0000_FFFF and all pins will be quasi-bidirectional mode after chip powered on.
+ * |        |          |If CIOINI is set to 0, the default value is 0x0000_0000 and all pins will be input tri-state mode after chip powered on.
  * @var GPIO_T::OFFD
  * Offset: 0x04/0x44/0x84/0xC4/0x104 Port 0-4 Digital Input Path Disable Control
  * ---------------------------------------------------------------------------------------------------
  * |Bits    |Field     |Descriptions
  * | :----: | :----:   | :---- |
  * |[23:16] |OFFD      |Port 0-4 Pin [n] Digital Input Path Disable Control
- * |        |          |Each of these bits is used to control if the digital input path of corresponding Px.n pin is disabled. 
+ * |        |          |Each of these bits is used to control if the digital input path of corresponding Px.n pin is disabled.
  * |        |          |If input is analog signal, users can disable Px.n digital input path to avoid input current leakage.
  * |        |          |0 = Px.n digital input path Enabled.
  * |        |          |1 = Px.n digital input path Disabled (digital input tied to low).
@@ -1484,7 +1487,7 @@ typedef struct
  * |Bits    |Field     |Descriptions
  * | :----: | :----:   | :---- |
  * |[7:0]   |DMASK[n]  |Port 0-4 Pin [n] Data Output Write Mask
- * |        |          |These bits are used to protect the corresponding Px_DOUT[n] bit. When the DMASK[n] bit is set to 1, the corresponding Px_DOUT[n] bit is protected. 
+ * |        |          |These bits are used to protect the corresponding Px_DOUT[n] bit. When the DMASK[n] bit is set to 1, the corresponding Px_DOUT[n] bit is protected.
  * |        |          |If the write signal is masked, writing data to the protect bit is ignored.
  * |        |          |0 = Corresponding Px_DOUT[n] bit can be updated.
  * |        |          |1 = Corresponding Px_DOUT[n] bit protected.
@@ -1585,7 +1588,7 @@ typedef struct
 /**
  * @var GPIO_DBNCECON_T::DBNCECON
  * Offset: 0x180 Interrupt De-bounce Cycle Control
- * ---------------------------------------------------------------------------------------------------    
+ * ---------------------------------------------------------------------------------------------------
  * |Bits    |Field     |Descriptions
  * | :----: | :----:   | :---- |
  * |[3:0]   |DBCLKSEL  |De-bounce Sampling Cycle Selection
@@ -1801,8 +1804,8 @@ typedef struct
  * | :----: | :----:   | :---- |
  * |[2]     |AA        |Assert Acknowledge control bit.
  * |        |          |When AA=1 prior to address or data received, an acknowledged (low level to SDA) will be returned during
- * |        |          |the acknowledge clock pulse on the SCL line when 
- * |        |          |1. A slave is acknowledging the address sent from master, 
+ * |        |          |the acknowledge clock pulse on the SCL line when
+ * |        |          |1. A slave is acknowledging the address sent from master,
  * |        |          |2. The receiver devices are acknowledging the data sent by transmitter. When AA=0 prior to
  * |        |          |address or data received, a Not acknowledged (high level to SDA) will be returned during the acknowledge
  * |        |          |clock pulse on the SCL line.
@@ -1990,7 +1993,7 @@ typedef struct
     __IO uint32_t I2CADM1;       /* Offset: 0x28  I2C Slave Address Mask Register 1                                  */
     __IO uint32_t I2CADM2;       /* Offset: 0x2C  I2C Slave Address Mask Register 2                                  */
     __IO uint32_t I2CADM3;       /* Offset: 0x30  I2C Slave Address Mask Register 3                                  */
-    __I  uint32_t RESERVED0[2]; 
+    __I  uint32_t RESERVED0[2];
     __IO uint32_t I2CWKUPCON;    /* Offset: 0x3C  I2C Wake Up Control Register                                       */
     __IO uint32_t I2CWKUPSTS;    /* Offset: 0x40  I2C Wake Up Status Register                                        */
 
@@ -2395,7 +2398,7 @@ typedef struct
  * |[3]     |CAPCH0EN  |Capture Channel 0 transition Enable/Disable
  * |        |          |1 = Enable capture function on PWM group channel 0.
  * |        |          |0 = Disable capture function on PWM group channel 0
- * |        |          |When Enable, Capture latched the PWM-counter value and saved to CRLR (Rising latch) 
+ * |        |          |When Enable, Capture latched the PWM-counter value and saved to CRLR (Rising latch)
  * |        |          |and CFLR (Falling latch).
  * |        |          |When Disable, Capture does not update CRLR and CFLR, and disable PWM group
  * |        |          |channel 0 Interrupt.
@@ -2725,10 +2728,10 @@ typedef struct
     __IO uint32_t CNR3;          /* Offset: 0x30  PWM Counter 3/Timer 3 Loaded Value                                 */
     __IO uint32_t CMR3;          /* Offset: 0x34  PWM Comparator 3 Register                                          */
     __I  uint32_t PDR3;          /* Offset: 0x38  PWM Data 3 Register(current counter 3 value)                       */
-    __I  uint32_t RESERVE0;     
+    __I  uint32_t RESERVE0;
     __IO uint32_t PIER;          /* Offset: 0x40  PWM Interrupt Enable Register                                      */
     __IO uint32_t PIIR;          /* Offset: 0x44  PWM Interrupt Indication Register                                  */
-    __I  uint32_t RESERVE1[2];  
+    __I  uint32_t RESERVE1[2];
     __IO uint32_t CCR0;          /* Offset: 0x50  Capture 0/1 Control Register                                       */
     __IO uint32_t CCR2;          /* Offset: 0x54  Capture 2/3 Control Register                                       */
     __IO uint32_t CRLR0;         /* Offset: 0x58  Capture 0 Rising Latch Register                                    */
@@ -2743,7 +2746,7 @@ typedef struct
     __IO uint32_t POE;           /* Offset: 0x7C  PWM Output Enable Register                                         */
     __IO uint32_t TCON;          /* Offset: 0x80  PWM Trigger Control Register                                       */
     __IO uint32_t TSTATUS;       /* Offset: 0x84  PWM Trigger Status Register                                        */
-    __I  uint32_t RESERVE2[4];  
+    __I  uint32_t RESERVE2[4];
     __IO uint32_t PSCR;          /* Offset: 0x98  PWM Synchronous Control Register                                   */
 
 } PWM_T;
@@ -3143,7 +3146,7 @@ typedef struct
  * |        |          |TX_BIT_LEN = 0x1f ... 31 bits
  * |        |          |TX_BIT_LEN = 0x00 ... 32 bits
  * |[9:8]   |TX_NUM    |Numbers of Transmit/Receive Word (M05xxBN Only)
- * |        |          |This field specifies how many transmit/receive word numbers should be executed 
+ * |        |          |This field specifies how many transmit/receive word numbers should be executed
  * |        |          |in one transfer.
  * |        |          |00 = Only one transmit/receive word will be executed in one transfer.
  * |        |          |01 = Two successive transmit/receive words will be executed in one transfer. (burst mode)
@@ -3230,7 +3233,7 @@ typedef struct
  * |        |          |0 = The bus clock output frequency is fixed and decided only by the value of DIVIDER.
  * |        |          |1 = The bus clock output frequency is variable. The output frequency is decided by the
  * |        |          |values of VARCLK, DIVIDER, and DIVIDER2.
- * |        |          |Note: When this VARCLK_EN bit is set, the setting of TX_BIT_LEN must be 
+ * |        |          |Note: When this VARCLK_EN bit is set, the setting of TX_BIT_LEN must be
  * |        |          |programmed as 0x10 (16-bit mode).
  * |[24]    |RX_EMPTY  |Receive FIFO Buffer Empty Indicator (Read Only) (M05xxDN/DE Only)
  * |        |          |A mutual mirror bit of SPI_STATUS[24].
@@ -3378,7 +3381,7 @@ typedef struct
  * |        |          |This is used to ignore the slave select signal in Slave mode.
  * |        |          |The SPI controller can work with 3-wire interface including SPICLK, SPI_MISO, and SPI_MOSI.
  * |        |          |0 = 4-wire bi-direction interface.
- * |        |          |1 = 3-wire bi-direction interface. When this bit is set to 1, the controller will be ready to 
+ * |        |          |1 = 3-wire bi-direction interface. When this bit is set to 1, the controller will be ready to
  * |        |          |transmit/receive data after the GO_BUSY bit is set to 1.
  * |        |          |Note: In Slave 3-wire mode, the SS_LTRIG (SPI_SSR[4]) shall be set as 1.
  * |[9]     |SLV_ABORT |Slave 3-Wire Mode Abort Control
@@ -3491,15 +3494,15 @@ typedef struct
     __IO uint32_t CNTRL;         /* Offset: 0x00  SPI Control and Status Register                                    */
     __IO uint32_t DIVIDER;       /* Offset: 0x04  SPI Clock Divider Register                                         */
     __IO uint32_t SSR;           /* Offset: 0x08  SPI Slave Select Register                                          */
-    __I  uint32_t RESERVE0;     
+    __I  uint32_t RESERVE0;
     __I  uint32_t RX0;           /* Offset: 0x10  Data Receive Register                                              */
     __I  uint32_t RX1;           /* Offset: 0x14  Data Receive Register                                              */
-    __I  uint32_t RESERVE1[2];  
+    __I  uint32_t RESERVE1[2];
     __O  uint32_t TX0;           /* Offset: 0x20  Data Transmit Register                                             */
     __O  uint32_t TX1;           /* Offset: 0x24  Data Transmit Register                                             */
-    __I  uint32_t RESERVE2[3];  
+    __I  uint32_t RESERVE2[3];
     __IO uint32_t VARCLK;        /* Offset: 0x34  Variable Clock Pattern Register                                    */
-    __I  uint32_t RESERVE3;     
+    __I  uint32_t RESERVE3;
     __IO uint32_t CNTRL2;        /* Offset: 0x3C  SPI Control and Status Register 2                                  */
     __IO uint32_t FIFO_CTL;      /* Offset: 0x40  SPI FIFO Control Register                                          */
     __IO uint32_t STATUS;        /* Offset: 0x44  SPI Status Register                                                */
@@ -3758,11 +3761,11 @@ typedef struct
  * |        |          |0 = EBI controller normal operation.
  * |        |          |1 = EBI controller reset.
  * |        |          |Note: This bit is write protected bit. Refer to the REGWRPROT register.
- * |[4]     |HDIV_RST  |HDIV Controller Reset (Write Protect) 
+ * |[4]     |HDIV_RST  |HDIV Controller Reset (Write Protect)
  * |        |          |Set this bit to 1 will generate a reset signal to the hardware divider. User need to set this bit to 0 to release from the reset state.
  * |        |          |0 = Hardware divider controller normal operation.
  * |        |          |1 = Hardware divider controller reset.
- * |        |          |Note: This bit is write protected bit. Refer to the REGWRPROT register. 
+ * |        |          |Note: This bit is write protected bit. Refer to the REGWRPROT register.
  * @var GCR_T::IPRSTC2
  * Offset: 0x0C  Peripheral Reset Control Resister 2
  * ---------------------------------------------------------------------------------------------------
@@ -3809,10 +3812,10 @@ typedef struct
  * |        |          |1 = PWM47 controller reset.
  * |[22]    |ACMP01_RST|Analog Comparator A Controller Reset
  * |        |          |0 = Analog Comparator A controller normal operation.
- * |        |          |1 = Analog Comparator A controller reset.     
+ * |        |          |1 = Analog Comparator A controller reset.
  * |[22]    |ACMP23_RST|Analog Comparator B Controller Reset
  * |        |          |0 = Analog Comparator B controller normal operation.
- * |        |          |1 = Analog Comparator B controller reset.         
+ * |        |          |1 = Analog Comparator B controller reset.
  * |[28]    |ADC_RST   |ADC Controller Reset
  * |        |          |0 = ADC controller normal operation.
  * |        |          |1 = ADC controller reset.
@@ -3867,7 +3870,7 @@ typedef struct
  * |        |          |This bit is used to enable/disable temperature sensor function.
  * |        |          |0 = Temperature sensor function Disabled (default).
  * |        |          |1 = Temperature sensor function Enabled.
- * |        |          |Note: After this bit is set to 1, the value of temperature sensor output can be obtained from the ADC conversion result. 
+ * |        |          |Note: After this bit is set to 1, the value of temperature sensor output can be obtained from the ADC conversion result.
  * |        |          |Please refer to the ADC chapter for detailed ADC conversion functional description.
  * @var GCR_T::PORCR
  * Offset: 0x24  Power-On-Reset Control Register
@@ -4233,12 +4236,12 @@ typedef struct
     __IO uint32_t RSTSRC;        /* Offset: 0x04  System Reset Source Register                                       */
     __IO uint32_t IPRSTC1;       /* Offset: 0x08  Peripheral Reset Control Resister 1                                */
     __IO uint32_t IPRSTC2;       /* Offset: 0x0C  Peripheral Reset Control Resister 2                                */
-    __I  uint32_t RESERVED0[2]; 
+    __I  uint32_t RESERVED0[2];
     __IO uint32_t BODCR;         /* Offset: 0x18  Brown-Out Detector Control Register                                */
     __IO uint32_t TEMPCR;        /* Offset: 0x1C  Temperature Sensor Control Register                                */
-    __I  uint32_t RESERVED1;    
+    __I  uint32_t RESERVED1;
     __IO uint32_t PORCR;         /* Offset: 0x24  Power-On-Reset Control Register                                    */
-    __I  uint32_t RESERVED2[2]; 
+    __I  uint32_t RESERVED2[2];
     __IO uint32_t P0_MFP;        /* Offset: 0x30  P0 Multiple Function and Input Type Control Register               */
     __IO uint32_t P1_MFP;        /* Offset: 0x34  P1 Multiple Function and Input Type Control Register               */
     __IO uint32_t P2_MFP;        /* Offset: 0x38  P2 Multiple Function and Input Type Control Register               */
@@ -4885,36 +4888,36 @@ typedef struct
  * | :----: | :----:   | :---- |
  * |[0]     |RDA_IEN   |Receive Data Available Interrupt Enable
  * |        |          |0 = Receive data available interrupt Disabled.
- * |        |          |1 = Receive data available interrupt Enabled.    
+ * |        |          |1 = Receive data available interrupt Enabled.
  * |[1]     |THRE_IEN  |Transmit Holding Register Empty Interrupt Enable
  * |        |          |0 = Transmit holding register empty interrupt Disabled.
- * |        |          |1 = Transmit holding register empt interrupt Enabled.    
+ * |        |          |1 = Transmit holding register empt interrupt Enabled.
  * |[2]     |RLS_IEN   |Receive Line Status Interrupt Enable
  * |        |          |0 = Receive Line Status interrupt Disabled.
- * |        |          |1 = Receive Line Status interrupt Enabled.    
+ * |        |          |1 = Receive Line Status interrupt Enabled.
  * |[3]     |MODEM_IEN |Modem Status Interrupt Enable
  * |        |          |0 = Modem status interrupt Disabled.
- * |        |          |1 = Modem status interrupt Enabled.    
+ * |        |          |1 = Modem status interrupt Enabled.
  * |[4]     |RTO_IEN   |RX Time-out Interrupt Enable
  * |        |          |0 = RX time-out interrupt Disabled.
- * |        |          |1 = RX time-out interrupt Enabled.     
+ * |        |          |1 = RX time-out interrupt Enabled.
  * |[5]     |BUF_ERR_IEN|Buffer Error Interrupt Enable
  * |        |          |0 = Buffer error interrupt Disabled.
- * |        |          |1 = Buffer error interrupt Enabled.   
+ * |        |          |1 = Buffer error interrupt Enabled.
  * |[6]     |WAKE_EN   |UART Wake-up Function Enable
  * |        |          |0 = UART wake-up function Disabled.
- * |        |          |1 = UART wake-up function Enabled, when chip is in Power-down mode, an external CTS change will wake up chip from Power-down mode.     
+ * |        |          |1 = UART wake-up function Enabled, when chip is in Power-down mode, an external CTS change will wake up chip from Power-down mode.
  * |[8]     |LIN_RX_BRK_IEN|LIN RX Break Field Detected Interrupt Enable Control
  * |        |          |0 = LIN bus RX break filed interrupt Disabled.
  * |        |          |1 = LIN bus RX break filed interrupt Enabled.
- * |        |          |Note: This bit is used for LIN function mode.     
+ * |        |          |Note: This bit is used for LIN function mode.
  * |[11]    |TIME_OUT_EN|Time-out Counter Enable
  * |        |          |0 = Time-out counter Disabled.
- * |        |          |1 = Time-out counter Enabled.     
+ * |        |          |1 = Time-out counter Enabled.
  * |[12]    |AUTO_RTS_EN|RTS Auto Flow Control Enable
  * |        |          |0 = RTS auto flow control Disabled.
  * |        |          |1 = RTS auto flow control Enabled.
- * |        |          |Note: When RTS auto-flow is enabled, if the number of bytes in the RX FIFO is equal to the RTS_TRI_LEV (UA_FCR [19:16]), the UART will de-assert RTS signal.    
+ * |        |          |Note: When RTS auto-flow is enabled, if the number of bytes in the RX FIFO is equal to the RTS_TRI_LEV (UA_FCR [19:16]), the UART will de-assert RTS signal.
  * |[13]    |AUTO_CTS_EN|CTS Auto Flow Control Enable
  * |        |          |0 = CTS auto flow control Disabled.
  * |        |          |1 = CTS auto flow control Enabled.
@@ -4940,7 +4943,7 @@ typedef struct
  * |        |          |0001 = RX FIFO Interrupt Trigger Level is 4 bytes.
  * |        |          |0010 = RX FIFO Interrupt Trigger Level is 8 bytes.
  * |        |          |0011 = RX FIFO Interrupt Trigger Level is 14 bytes.
- * |[8]     |RX_DIS    |Receiver Disable 
+ * |[8]     |RX_DIS    |Receiver Disable
  * |        |          |The receiver is disabled or not (set 1 to disable receiver)
  * |        |          |0 = Receiver Enabled.
  * |        |          |1 = Receiver Disabled.
@@ -4957,26 +4960,26 @@ typedef struct
  * |Bits    |Field     |Descriptions
  * | :----: | :----:   | :---- |
  * |[1:0]   |WLS       |Word Length Select
- * |        |          |This field sets UART word length.    
+ * |        |          |This field sets UART word length.
  * |        |          |00 = 5 bits.
  * |        |          |01 = 6 bits.
  * |        |          |10 = 7 bits.
  * |        |          |11 = 8 bits.
  * |[2]     |NSB       |Number of "STOP bit"
  * |        |          |0 = One "STOP bit" is generated in the transmitted data.
- * |        |          |1 = When select 5-bit word length, 1.5 "STOP bit" is generated in the transmitted data. When select 6-, 7- and 8-bit word length, 2 "STOP bit" is generated in the transmitted data.     
+ * |        |          |1 = When select 5-bit word length, 1.5 "STOP bit" is generated in the transmitted data. When select 6-, 7- and 8-bit word length, 2 "STOP bit" is generated in the transmitted data.
  * |[3]     |PBE       |Parity Bit Enable
  * |        |          |0 = No parity bit.
  * |        |          |1 = Parity bit generated Enabled.
- * |        |          |Note : Parity bit is generated on each outgoing character and is checked on each incoming data.     
+ * |        |          |Note : Parity bit is generated on each outgoing character and is checked on each incoming data.
  * |[4]     |EPE       |Even Parity Enable
  * |        |          |0 = Odd number of logic 1's is transmitted and checked in each word.
  * |        |          |1 = Even number of logic 1's is transmitted and checked in each word.
- * |        |          |Note: This bit has effect only when PBE (UA_LCR[3]) is set.     
+ * |        |          |Note: This bit has effect only when PBE (UA_LCR[3]) is set.
  * |[5]     |SPE       |Stick Parity Enable
  * |        |          |0 = Stick parity Disabled.
  * |        |          |1 = Stick parity Enabled.
- * |        |          |Note: If PBE (UA_LCR[3]) and EPE (UA_LCR[4]) are logic 1, the parity bit is transmitted and checked as logic 0. If PBE (UA_LCR[3]) is 1 and EPE (UA_LCR[4]) is 0 then the parity bit is transmitted and checked as 1.     
+ * |        |          |Note: If PBE (UA_LCR[3]) and EPE (UA_LCR[4]) are logic 1, the parity bit is transmitted and checked as logic 0. If PBE (UA_LCR[3]) is 1 and EPE (UA_LCR[4]) is 0 then the parity bit is transmitted and checked as 1.
  * |[6]     |BCB       |Break Control Bit
  * |        |          |0 = Break Control Disabled.
  * |        |          |1 = Break Control Enabled.
@@ -4992,7 +4995,7 @@ typedef struct
  * |        |          |1 = RTS signal is inactive.
  * |        |          |Note1: This RTS signal control bit is not effective when RTS auto-flow control is enabled in UART function mode.
  * |        |          |Note2: This RTS signal control bit is not effective when RS-485 auto direction mode (AUD) is enabled in RS-485 function mode.
- * |[9]     |LEV_RTS   |RTS Pin Active Level 
+ * |[9]     |LEV_RTS   |RTS Pin Active Level
  * |        |          |This bit defines the active level state of RTS pin output.
  * |        |          |0 = RTS pin output is high level active.
  * |        |          |1 = RTS pin output is low level active.
@@ -5001,7 +5004,7 @@ typedef struct
  * |        |          |0 = RTS pin output is low level voltage logic state.
  * |        |          |1 = RTS pin output is high level voltage logic state.
  * @var UART_T::MSR
- * Offset: 0x14  UART Modem Status Register 
+ * Offset: 0x14  UART Modem Status Register
  * ---------------------------------------------------------------------------------------------------
  * |Bits    |Field     |Descriptions
  * | :----: | :----:   | :---- |
@@ -5010,7 +5013,7 @@ typedef struct
  * |        |          |0 = CTS input has not change state.
  * |        |          |1 = CTS input has change state.
  * |        |          |Note: This bit is read only, but can be cleared by writing "1" to it.
- * |[4]     |CTS_ST    |CTS Pin Status (Read Only) 
+ * |[4]     |CTS_ST    |CTS Pin Status (Read Only)
  * |        |          |This bit mirror from CTS pin input of voltage logic status.
  * |        |          |0 = CTS pin input is low level voltage logic state.
  * |        |          |1 = CTS pin input is high level voltage logic state.
@@ -5029,12 +5032,12 @@ typedef struct
  * |        |          |If the number of bytes of received data is greater than RX_FIFO (UA_RBR) size, this bit will be set.
  * |        |          |0 = RX FIFO is not overflow.
  * |        |          |1 = RX FIFO is overflow.
- * |        |          |Note: This bit can be cleared by writing "1" to it.     
+ * |        |          |Note: This bit can be cleared by writing "1" to it.
  * |[3]     |RS485_ADD_DETF|RS-485 Address Byte Detection Flag
  * |        |          |0 = Receiver detects a data that is not an address byte (bit 9 = "0").
  * |        |          |1 = Receiver detects a data that is an address byte (bit 9 = "1").
  * |        |          |Note1: This field is used for RS-485 function mode and RS485_ADD_EN (UA_ALT_CSR[15]) is set to 1 to enable Address detection mode .
- * |        |          |Note2: This bit can be cleared by writing "1" to it.     
+ * |        |          |Note2: This bit can be cleared by writing "1" to it.
  * |[4]     |PEF       |Parity Error Flag
  * |        |          |This bit is set to logic 1 whenever the received character does not have a valid "parity bit", and is reset whenever the CPU writes 1 to this bit.
  * |        |          |0 = No parity error is generated.
@@ -5050,37 +5053,37 @@ typedef struct
  * |        |          |0 = No Break interrupt is generated.
  * |        |          |1 = Break interrupt is generated.
  * |        |          |Note: This bit can be cleared by writing "1" to it.
- * |[13:8]  |RX_POINTER|RX FIFO Pointer     
+ * |[13:8]  |RX_POINTER|RX FIFO Pointer
  * |        |          |This field indicates the RX FIFO Buffer Pointer. When UART receives one byte from external device, RX_POINTER increases one. When one byte of RX FIFO is read by CPU, RX_POINTER decreases one.
- * |        |          |The Maximum value shown in RX_POINTER is 15. When the using level of RX FIFO Buffer equal to 16, the RX_FULL bit is set to 1 and RXPTR will show 0. As one byte of RX FIFO is read by CPU, the RX_FULL bit is cleared to 0 and RX_POINTER will show 15.     
+ * |        |          |The Maximum value shown in RX_POINTER is 15. When the using level of RX FIFO Buffer equal to 16, the RX_FULL bit is set to 1 and RXPTR will show 0. As one byte of RX FIFO is read by CPU, the RX_FULL bit is cleared to 0 and RX_POINTER will show 15.
  * |[14]    |RX_EMPTY  |Receiver FIFO Empty (Read Only)
  * |        |          |This bit initiate RX FIFO empty or not.
  * |        |          |0 = RX FIFO is not empty.
  * |        |          |1 = RX FIFO is empty.
- * |        |          |Note: When the last byte of RX FIFO has been read by CPU, hardware sets this bit high. It will be cleared when UART receives any new data.     
+ * |        |          |Note: When the last byte of RX FIFO has been read by CPU, hardware sets this bit high. It will be cleared when UART receives any new data.
  * |[15]    |RX_FULL   |Receiver FIFO Full (Read Only)
  * |        |          |This bit indicates RX FIFO full or not.
  * |        |          |0 = RX FIFO is not full.
  * |        |          |1 = RX FIFO is full.
- * |        |          |Note: This bit is set when the using level of RX FIFO Buffer equal to 16; otherwise, it is cleared by hardware. 
- * |[21:16] |TX_POINTER|TX FIFO Pointer (Read Only)     
+ * |        |          |Note: This bit is set when the using level of RX FIFO Buffer equal to 16; otherwise, it is cleared by hardware.
+ * |[21:16] |TX_POINTER|TX FIFO Pointer (Read Only)
  * |        |          |This field indicates the TX FIFO Buffer Pointer. When CPU writes one byte into UA_THR, TX_POINTER increases one. When one byte of TX FIFO is transferred to Transmitter Shift Register, TX_POINTER decreases one.
- * |        |          |The Maximum value shown in TX_POINTER is 15. When the using level of TX FIFO Buffer equal to 16, the TX_FULL bit is set to 1 and TX_POINTER will show 0. As one byte of TX FIFO is transferred to Transmitter Shift Register, the TX_FULL bit is cleared to 0 and TX_POINTER will show 15.     
+ * |        |          |The Maximum value shown in TX_POINTER is 15. When the using level of TX FIFO Buffer equal to 16, the TX_FULL bit is set to 1 and TX_POINTER will show 0. As one byte of TX FIFO is transferred to Transmitter Shift Register, the TX_FULL bit is cleared to 0 and TX_POINTER will show 15.
  * |[22]    |TX_EMPTY  |Transmitter FIFO Empty (Read Only)
  * |        |          |This bit indicates TX FIFO is empty or not.
- * |        |          |0 = TX FIFO is not empty.     
+ * |        |          |0 = TX FIFO is not empty.
  * |        |          |1 = TX FIFO is empty.
- * |        |          |Note: When the last byte of TX FIFO has been transferred to Transmitter Shift Register, hardware sets this bit high. It will be cleared when writing data into UA_THR (TX FIFO not empty).     
+ * |        |          |Note: When the last byte of TX FIFO has been transferred to Transmitter Shift Register, hardware sets this bit high. It will be cleared when writing data into UA_THR (TX FIFO not empty).
  * |[23]    |TX_FULL   |Transmitter FIFO Full (Read Only)
  * |        |          |This bit indicates TX FIFO full or not.
  * |        |          |0 = TX FIFO is not full.
  * |        |          |1 = TX FIFO is full.
- * |        |          |Note: This bit is set when the using level of TX FIFO Buffer equal to 16; otherwise, it is cleared by hardware.     
- * |[24]    |TX_OVER_IF|Tx Overflow Error Interrupt Flag     
+ * |        |          |Note: This bit is set when the using level of TX FIFO Buffer equal to 16; otherwise, it is cleared by hardware.
+ * |[24]    |TX_OVER_IF|Tx Overflow Error Interrupt Flag
  * |        |          |If TX FIFO (UA_THR) is full, an additional write to UA_THR will cause this bit to logic 1.
  * |        |          |0 = TX FIFO is not overflow.
  * |        |          |1 = TX FIFO is overflow.
- * |        |          |Note: This bit can be cleared by writing "1" to it.     
+ * |        |          |Note: This bit can be cleared by writing "1" to it.
  * |[28]    |TE_FLAG   |Transmitter Empty Flag (Read Only)
  * |        |          |This bit is set by hardware when TX FIFO (UA_THR) is empty and the STOP bit of the last byte has been transmitted.
  * |        |          |0 = TX FIFO is not empty or the STOP bit of the last byte has been not transmitted.
@@ -5112,7 +5115,7 @@ typedef struct
  * |        |          |At the same time, the bit of UA_FSR[RS485_ADD_DETF] is also set.
  * |        |          |Note2: This bit is read only and reset to 0 when all bits of BIF(UA_FSR[6]), FEF(UA_FSR[5]) and PEF(UA_FSR[4]) are cleared.
  * |        |          |Note3: In RS-485 function mode, this bit is read only and reset to 0 when all bits of BIF(UA_FSR[6]) , FEF(UA_FSR[5]) and PEF(UA_FSR[4]) and RS485_ADD_DETF (UA_FSR[3]) are cleared.
- * |[3]     |MODEM_IF  |MODEM Interrupt Flag (Read Only) 
+ * |[3]     |MODEM_IF  |MODEM Interrupt Flag (Read Only)
  * |        |          |This bit is set when the CTS pin has state change (DCTSF (UA_MSR[0]) = 1).
  * |        |          |If MODEM_IEN (UA_IER [3]) is enabled, the Modem interrupt will be generated.
  * |        |          |0 = No Modem interrupt flag is generated.
@@ -5189,7 +5192,7 @@ typedef struct
  * |        |          |The baud rate divider M = X+1.
  * |[28]    |DIV_X_ONE |Divider X Equal To 1
  * |        |          |0 = Divider M is X+1 (the equation of M = X+1, but DIVIDER_X[27:24] must >= 8).
- * |        |          |1 = Divider M is 1 (the equation of M = 1, but BRD [15:0] must >= 3).  
+ * |        |          |1 = Divider M is 1 (the equation of M = 1, but BRD [15:0] must >= 3).
  * |[29]    |DIV_X_EN  |Divider X Enable
  * |        |          |The BRD = Baud Rate Divider, and the baud rate equation is
  * |        |          |Baud Rate = Clock / [M * (BRD + 2)]; The default value of M is 16.
@@ -5197,7 +5200,7 @@ typedef struct
  * |        |          |1 = Divider X Enabled (the equation of M = X+1, but DIVIDER_X [27:24] must >= 8).
  * |        |          |Note: In IrDA mode, this bit must disable.
  * @var UART_T::IRCR
- * Offset: 0x28  UART IrDA Control Register 
+ * Offset: 0x28  UART IrDA Control Register
  * ---------------------------------------------------------------------------------------------------
  * |Bits    |Field     |Descriptions
  * | :----: | :----:   | :---- |
@@ -5977,7 +5980,3 @@ typedef volatile unsigned short vu16;
 #include "hdiv.h"
 #include "acmp.h"
 #endif
-
-
-
-

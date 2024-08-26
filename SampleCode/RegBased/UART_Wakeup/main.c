@@ -48,7 +48,7 @@ void PowerDownFunction(void)
     /* Check if all the debug messages are finished */
     u32TimeOutCnt = SystemCoreClock; /* 1 second time-out */
     UART_WAIT_TX_EMPTY(UART0)
-        if(--u32TimeOutCnt == 0) break;
+    if(--u32TimeOutCnt == 0) break;
 
     /* Set the processor is deep sleep as its low power mode */
     SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
@@ -74,7 +74,7 @@ void UART_CTSWakeUpTest(void)
     UART1->MSR |= UART_MSR_DCTSF_Msk;
 
     /* Enable UART Wake-up function and Modem Status interrupt */
-    UART1->IER |= (UART_IER_WAKE_EN_Msk|UART_IER_MODEM_IEN_Msk);
+    UART1->IER |= (UART_IER_WAKE_EN_Msk | UART_IER_MODEM_IEN_Msk);
     NVIC_EnableIRQ(UART1_IRQn);
 
     printf("System enter to Power-down mode.\n");
@@ -90,7 +90,7 @@ void UART_CTSWakeUpTest(void)
     SYS_LockReg();
 
     /* Disable UART Wake-up function and Modem Status interrupt */
-    UART1->IER &= ~(UART_IER_WAKE_EN_Msk|UART_IER_MODEM_IEN_Msk);
+    UART1->IER &= ~(UART_IER_WAKE_EN_Msk | UART_IER_MODEM_IEN_Msk);
     NVIC_DisableIRQ(UART1_IRQn);
 
     printf("\nSystem waken-up done.\n");
@@ -100,6 +100,8 @@ void UART_CTSWakeUpTest(void)
 
 void SYS_Init(void)
 {
+	uint32_t u32TimeOutCnt;
+
     /*---------------------------------------------------------------------------------------------------------*/
     /* Init System Clock                                                                                       */
     /*---------------------------------------------------------------------------------------------------------*/
@@ -108,7 +110,9 @@ void SYS_Init(void)
     CLK->PWRCON |= CLK_PWRCON_OSC22M_EN_Msk;
 
     /* Waiting for Internal RC clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_OSC22M_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Switch HCLK clock source to Internal RC and HCLK source divide 1 */
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_HIRC;
@@ -121,11 +125,15 @@ void SYS_Init(void)
     CLK->PWRCON |= CLK_PWRCON_XTL12M_EN_Msk;
 
     /* Waiting for external XTAL clock ready */
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_XTL12M_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
 
     /* Set core clock as PLL_CLOCK from PLL */
     CLK->PLLCON = PLLCON_SETTING;
-    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk));
+    u32TimeOutCnt = __HIRC;
+    while(!(CLK->CLKSTATUS & CLK_CLKSTATUS_PLL_STB_Msk))
+		if(--u32TimeOutCnt == 0) break;
     CLK->CLKSEL0 = (CLK->CLKSEL0 & (~CLK_CLKSEL0_HCLK_S_Msk)) | CLK_CLKSEL0_HCLK_S_PLL;
 
     /* Update System Core Clock */
