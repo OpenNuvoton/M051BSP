@@ -16,7 +16,7 @@
 #define PLLCON_SETTING      CLK_PLLCON_50MHz_HXT
 #define PLL_CLOCK           50000000
 
-#if !defined(__ICCARM__) && !defined(__GNUC__)
+#if defined(__ARMCC_VERSION)
 extern uint32_t Image$$RO$$Base;
 #endif
 
@@ -146,10 +146,12 @@ int32_t main(void)
     printf("Boot from 0x8000\n");
 #endif
 
-#if defined(__ICCARM__) || defined(__GNUC__)
-    printf("VECMAP = 0x%x\n", FMC_GetVECMAP());
-#else
+#if defined(__ARMCC_VERSION)
     printf("Current RO Base = 0x%x, VECMAP = 0x%x\n", (uint32_t)&Image$$RO$$Base, FMC_GetVECMAP());
+#elif defined(__ICCARM__)
+    printf("Current RO Base = 0x%x, VECMAP = 0x%x\n", (uint32_t)BOOTADDR, FMC_GetVECMAP());
+#else
+    printf("VECMAP = 0x%x\n", FMC_GetVECMAP());
 #endif
 
     /* Check IAP mode */
@@ -216,7 +218,7 @@ int32_t main(void)
     if(FMC_GetVECMAP() != u32BootAddr)
     {
         printf("\nERROR: VECMAP isn't supported in current chip.\n");
-        goto lexit;
+        while(1);
     }
 
     /* Reset All IP before boot to new AP */
@@ -226,13 +228,12 @@ int32_t main(void)
     /* Obtain Reset Handler address of new boot. */
     ResetFunc = (FUNC_PTR *)M32(4);
 
-#if defined(__GNUC__)
-    /* Set Main Stack Pointer register of new boot */
-    //__set_MSP(M32(FMC_Read(u32BootAddr)));
-    __set_MSP(0x20001000);
-#else
+#if defined(__ARMCC_VERSION) || defined(__ICCARM__)
     /* Set Main Stack Pointer register of new boot */
     __set_MSP(M32(0));
+#else
+    /* Set Main Stack Pointer register of new boot */
+    __set_MSP(M32(FMC_Read(u32BootAddr)));
 #endif
 
     /* Call reset handler of new boot */

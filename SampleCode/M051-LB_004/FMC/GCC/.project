@@ -98,5 +98,41 @@
 				<arguments>1.0-name-matches-false-false-lcd_driver.c</arguments>
 			</matcher>
 		</filter>
+		<filter>
+			<id>1505295044452</id>
+			<name>Library/Library</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-clk.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1505295044464</id>
+			<name>Library/Library</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-sys.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1505295044469</id>
+			<name>Library/Library</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-gpio.c</arguments>
+			</matcher>
+		</filter>
+		<filter>
+			<id>1505295044474</id>
+			<name>Library/Library</name>
+			<type>5</type>
+			<matcher>
+				<id>org.eclipse.ui.ide.multiFilter</id>
+				<arguments>1.0-name-matches-false-false-retarget.c</arguments>
+			</matcher>
+		</filter>
 	</filteredResources>
 </projectDescription>

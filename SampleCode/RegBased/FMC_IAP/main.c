@@ -88,7 +88,9 @@ void UART0_Init(void)
     UART0->LCR = UART_WORD_LEN_8 | UART_PARITY_NONE | UART_STOP_BIT_1;
 }
 
-
+#if defined ( __ICCARM__ )
+#pragma optimize=low
+#endif
 void FMC_LDROM_Test(void)
 {
     int32_t  i32Err;
@@ -159,6 +161,7 @@ void FMC_LDROM_Test(void)
 /*---------------------------------------------------------------------------------------------------------*/
 int32_t main(void)
 {
+    uint32_t u32Data;
     uint32_t u32Cfg;
     int32_t (*func)(int32_t n);
     int32_t i;
@@ -196,7 +199,7 @@ int32_t main(void)
     u32Cfg = FMC_Read(FMC_CONFIG_BASE);
     if((u32Cfg & 0xc0) != 0x80)
     {
-        printf("Do you want to set to new IAP mode (APROM boot + LDROM) y/n?\n");
+        printf("Do you want to set to new IAP mode (APROM boot + LDROM) (y/n)?\n");
         if(getchar() == 'y')
         {
             FMC->ISPCON |= FMC_ISPCON_CFGUEN_Msk; /* Enable user configuration update */
@@ -204,8 +207,10 @@ int32_t main(void)
             /* Set CBS to b'10 */
             u32Cfg &= ~0xc0ul;
             u32Cfg |= 0x80;
+            u32Data = FMC_Read(FMC_CONFIG_BASE + 0x4); /* Backup the data of config1 */
             FMC_Erase(FMC_CONFIG_BASE);
             FMC_Write(FMC_CONFIG_BASE, u32Cfg);
+            FMC_Write(FMC_CONFIG_BASE + 0x4, u32Data);
 
             printf("Press any key to reset system to enable new IAP mode ...\n");
             getchar();
@@ -218,7 +223,7 @@ int32_t main(void)
         }
     }
 
-    printf("Do you want to write LDROM code to 0x100000\n");
+    printf("Do you want to write LDROM code to 0x100000 (y/n)?\n");
 
     if(getchar() == 'y')
     {
@@ -233,7 +238,7 @@ int32_t main(void)
 
         if(g_u32ImageSize > FMC_LDROM_SIZE)
         {
-            printf("  ERROR: Loader Image is larger than 4KBytes!\n");
+            printf("  ERROR: Loader Image is larger than 4K Bytes!\n");
             goto lexit;
         }
 
@@ -241,7 +246,7 @@ int32_t main(void)
         FMC_LDROM_Test();
     }
 
-#if defined(__GNUC__)
+#if defined(__GNUC_AP__)
     for(i = 0; i < 4; i++)
     {
         /* Call the function of LDROM */
