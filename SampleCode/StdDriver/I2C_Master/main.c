@@ -263,6 +263,9 @@ void SYS_Init(void)
     /* Configure the SDA0 & SCL0 of I2C0 pins */
     SYS->P3_MFP &= ~(SYS_MFP_P34_Msk | SYS_MFP_P35_Msk);
     SYS->P3_MFP |= (SYS_MFP_P34_SDA0 | SYS_MFP_P35_SCL0);
+
+    /* I2C pin enable schmitt trigger */
+    SYS->P3_MFP |= ((BIT4 | BIT5) << SYS_P3_MFP_P3_TYPE_Pos);
 }
 
 void UART0_Init()

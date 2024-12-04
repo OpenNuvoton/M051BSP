@@ -73,7 +73,7 @@ int32_t SYS_Init(void)
     SYS->P2_MFP |= (SYS_MFP_P25_SDA1 | SYS_MFP_P24_SCL1);
 
     /* I2C clock pin enable schmitt trigger */
-    SYS->P2_MFP |= (4<<SYS_P2_MFP_P2_TYPE_Pos);
+    SYS->P2_MFP |= (BIT4 << SYS_P2_MFP_P2_TYPE_Pos);
 
     return 0;
 }
